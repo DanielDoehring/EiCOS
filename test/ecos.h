@@ -5,7 +5,7 @@
 #include "eicos.hpp"
 
 using idxint = int;
-using pfloat = double;
+using pfloat = long double;
 using pwork = EiCOS::Solver;
 
 pwork *ECOS_setup(idxint n, idxint m, idxint p, idxint l, idxint ncones, idxint *q, idxint /*nexc*/,

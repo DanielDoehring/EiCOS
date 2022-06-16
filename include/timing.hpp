@@ -2,14 +2,14 @@
 
 #include <chrono>
 
-double tic()
+long double tic()
 {
-    const std::chrono::duration<double, std::milli> s = std::chrono::system_clock::now().time_since_epoch();
+    const std::chrono::duration<long double, std::milli> s = std::chrono::system_clock::now().time_since_epoch();
 
     return s.count();
 }
 
-double toc(double start)
+long double toc(long double start)
 {
     return tic() - start;
 }

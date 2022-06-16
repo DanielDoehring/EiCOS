@@ -76,7 +76,7 @@ static char *all_tests()
 
 int main(void)
 {
-    double t0 = tic();
+    long double t0 = tic();
     char *result = all_tests();
     if (result != 0)
     {
@@ -87,7 +87,7 @@ int main(void)
         printf("\nALL TESTS PASSED\n");
     }
     printf("Tests run: %d\n", tests_run);
-    printf("Test time: %f\n", toc(t0));
+    printf("Test time: %Lf\n", toc(t0));
 
     return result != 0;
 }
