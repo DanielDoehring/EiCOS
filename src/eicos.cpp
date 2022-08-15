@@ -7,7 +7,7 @@
 namespace EiCOS
 {
 
-    void Work::allocate(size_t n_var, size_t n_eq, size_t n_ineq)
+    void Work::allocate(const size_t n_var, const size_t n_eq, const size_t n_ineq)
     {
         x.resize(n_var);
         y.resize(n_eq);
@@ -88,7 +88,7 @@ namespace EiCOS
         build(G, A, c, h, b, soc_dims);
     }
 
-    Solver::Solver(int n, int m, int p, int /* l */, int ncones, int *q,
+    Solver::Solver(const int n, const int m, const int p, const int /* l */, const int ncones, int *q,
                    float_type *Gpr, int *Gjc, int *Gir,
                    float_type *Apr, int *Ajc, int *Air,
                    float_type *c, float_type *h, float_type *b)
@@ -523,7 +523,7 @@ namespace EiCOS
      * If none of the exit tests are met, the function returns not_converged_yet.
      * This should not be an exitflag that is ever returned to the outside world.
      */
-    exitcode Solver::checkExitConditions(bool reduced_accuracy)
+    exitcode Solver::checkExitConditions(const bool reduced_accuracy)
     {
         float_type feastol;
         float_type abstol;

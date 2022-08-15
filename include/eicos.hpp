@@ -14,13 +14,13 @@ namespace EiCOS
 
     enum class exitcode
     {
-        optimal = 0,           /* Problem solved to optimality              */
-        primal_infeasible = 1, /* Found certificate of primal infeasibility */
-        dual_infeasible = 2,   /* Found certificate of dual infeasibility   */
-        maxit = -1,            /* Maximum number of iterations reached      */
-        numerics = -2,         /* Search direction unreliable               */
-        outcone = -3,          /* s or z got outside the cone, numerics?    */
-        fatal = -7,            /* Unknown problem in solver                 */
+        optimal = 0,           /* Problem solved to optimality               */
+        primal_infeasible = 1, /* Found certificate of primal infeasibility  */
+        dual_infeasible = 2,   /* Found certificate of dual infeasibility    */
+        maxit = -1,            /* Maximum number of iterations reached       */
+        numerics = -2,         /* Search direction unreliable                */
+        outcone = -3,          /* s or z got outside the cone, numerics?     */
+        fatal = -7,            /* Unknown problem in solver                  */
         close_to_optimal = 10,
         close_to_primal_infeasible = 11,
         close_to_dual_infeasible = 12,
@@ -104,7 +104,7 @@ namespace EiCOS
 
     struct Work
     {
-        void allocate(size_t n_var, size_t n_eq, size_t n_ineq);
+        void allocate(const size_t n_var, const size_t n_eq, const size_t n_ineq);
         Eigen::Vector<float_type, Eigen::Dynamic>  x;      // Primal variables  size n_var
         Eigen::Vector<float_type, Eigen::Dynamic>  y;      // Multipliers for equality constaints  (size n_eq)
         Eigen::Vector<float_type, Eigen::Dynamic>  z;      // Multipliers for conic inequalities   (size n_ineq)
@@ -123,24 +123,24 @@ namespace EiCOS
 
     class Solver
     {
-        /**
-     *
-     *    ..---''''---..
-     *    \ '''----''' /
-     *     \          /
-     *      \      ########  ##  ########  ########  ########
-     *       \     ########  ##  ########  ########  ########
-     *        \    ##            ##        ##    ##  ##
-     *          \/ ########  ##  ##        ##    ##  ########
-     *          /\ ########  ##  ##        ##    ##  ########
-     *        /    ##        ##  ##        ##    ##        ##
-     *       /     ########  ##  ########  ########  ########
-     *      /      ########  ##  ########  ########  ########
-     *     /          \
-     *    /            \
-     *    `'---....---'´
-     *
-     */
+    /**
+      *
+      *    ..---''''---..
+      *    \ '''----''' /
+      *     \          /
+      *      \      ########  ##  ########  ########  ########
+      *       \     ########  ##  ########  ########  ########
+      *        \    ##            ##        ##    ##  ##
+      *          \/ ########  ##  ##        ##    ##  ########
+      *          /\ ########  ##  ##        ##    ##  ########
+      *        /    ##        ##  ##        ##    ##        ##
+      *       /     ########  ##  ########  ########  ########
+      *      /      ########  ##  ########  ########  ########
+      *     /          \
+      *    /            \
+      *    `'---....---'´
+      *
+      */
 
     public:
         Solver(const Eigen::SparseMatrix<float_type> &G,
@@ -156,7 +156,7 @@ namespace EiCOS
                         const Eigen::Vector<float_type, Eigen::Dynamic>  &b);
 
         // traditional interface for compatibility
-        Solver(int n, int m, int p, int l, int ncones, int *q,
+        Solver(const int n, const int m, const int p, const int l, const int ncones, int *q,
                float_type *Gpr, int *Gjc, int *Gir,
                float_type *Apr, int *Ajc, int *Air,
                float_type *c, float_type *h, float_type *b);
@@ -245,7 +245,7 @@ namespace EiCOS
         void bringToCone(const Eigen::Vector<float_type, Eigen::Dynamic>  &r, Eigen::Vector<float_type, Eigen::Dynamic>  &s);
         void computeResiduals();
         void updateStatistics();
-        exitcode checkExitConditions(bool reduced_accuracy);
+        exitcode checkExitConditions(const bool reduced_accuracy);
         bool updateScalings(const Eigen::Vector<float_type, Eigen::Dynamic>  &s,
                             const Eigen::Vector<float_type, Eigen::Dynamic>  &z,
                             Eigen::Vector<float_type, Eigen::Dynamic>  &lambda);
