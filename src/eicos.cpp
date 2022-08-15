@@ -22,13 +22,13 @@ namespace EiCOS
      */
     bool Information::isBetterThan(Information &other) const
     {
-        if (pinfres.has_value() and kapovert > 1.L)
+        if (pinfres.has_value() and kapovert > static_cast<float_type>(1.))
         {
             if (other.pinfres.has_value())
             {
-                if ((gap > 0.L and other.gap > 0.L and gap < other.gap) and
-                    (pinfres > 0.L and pinfres < other.pres) and
-                    (mu > 0.L and mu < other.mu))
+                if ((gap > static_cast<float_type>(0.) and other.gap > static_cast<float_type>(0.) and gap < other.gap) and
+                    (pinfres > static_cast<float_type>(0.) and pinfres < other.pres) and
+                    (mu > static_cast<float_type>(0.) and mu < other.mu))
                 {
                     return true;
                 }
@@ -39,8 +39,8 @@ namespace EiCOS
             }
             else
             {
-                if ((gap > 0.L and other.gap > 0.L and gap < other.gap) and
-                    (mu > 0.L and mu < other.mu))
+                if ((gap > static_cast<float_type>(0.) and other.gap > static_cast<float_type>(0.) and gap < other.gap) and
+                    (mu > static_cast<float_type>(0.) and mu < other.mu))
                 {
                     return true;
                 }
@@ -52,11 +52,11 @@ namespace EiCOS
         }
         else
         {
-            if ((gap > 0.L and other.gap > 0.L and gap < other.gap) and
-                (pres > 0.L and pres < other.pres) and
-                (dres > 0.L and dres < other.dres) and
-                (kapovert > 0.L and kapovert < other.kapovert) and
-                (mu > 0.L and mu < other.mu))
+            if ((gap > static_cast<float_type>(0.) and other.gap > static_cast<float_type>(0.) and gap < other.gap) and
+                (pres > static_cast<float_type>(0.) and pres < other.pres) and
+                (dres > static_cast<float_type>(0.) and dres < other.dres) and
+                (kapovert > static_cast<float_type>(0.) and kapovert < other.kapovert) and
+                (mu > static_cast<float_type>(0.) and mu < other.mu))
             {
                 return true;
             }
@@ -67,53 +67,53 @@ namespace EiCOS
         }
     }
 
-    void printSparseMatrix(const Eigen::SparseMatrix<long double> &m)
+    void printSparseMatrix(const Eigen::SparseMatrix<float_type> &m)
     {
         for (int j = 0; j < m.outerSize(); j++)
         {
-            for (Eigen::SparseMatrix<long double>::InnerIterator it(m, j); it; ++it)
+            for (Eigen::SparseMatrix<float_type>::InnerIterator it(m, j); it; ++it)
             {
                 print("({:3},{:3}) = {}\n", it.row() + 1, it.col() + 1, it.value());
             }
         }
     }
 
-    Solver::Solver(const Eigen::SparseMatrix<long double> &G,
-                   const Eigen::SparseMatrix<long double> &A,
-                   const Eigen::Vector<long double, Eigen::Dynamic>  &c,
-                   const Eigen::Vector<long double, Eigen::Dynamic>  &h,
-                   const Eigen::Vector<long double, Eigen::Dynamic>  &b,
+    Solver::Solver(const Eigen::SparseMatrix<float_type> &G,
+                   const Eigen::SparseMatrix<float_type> &A,
+                   const Eigen::Vector<float_type, Eigen::Dynamic>  &c,
+                   const Eigen::Vector<float_type, Eigen::Dynamic>  &h,
+                   const Eigen::Vector<float_type, Eigen::Dynamic>  &b,
                    const Eigen::VectorXi &soc_dims)
     {
         build(G, A, c, h, b, soc_dims);
     }
 
     Solver::Solver(int n, int m, int p, int /* l */, int ncones, int *q,
-                   long double *Gpr, int *Gjc, int *Gir,
-                   long double *Apr, int *Ajc, int *Air,
-                   long double *c, long double *h, long double *b)
+                   float_type *Gpr, int *Gjc, int *Gir,
+                   float_type *Apr, int *Ajc, int *Air,
+                   float_type *c, float_type *h, float_type *b)
     {
-        Eigen::SparseMatrix<long double> G_;
-        Eigen::SparseMatrix<long double> A_;
-        Eigen::Vector<long double, Eigen::Dynamic>  c_;
-        Eigen::Vector<long double, Eigen::Dynamic>  h_;
-        Eigen::Vector<long double, Eigen::Dynamic>  b_;
+        Eigen::SparseMatrix<float_type> G_;
+        Eigen::SparseMatrix<float_type> A_;
+        Eigen::Vector<float_type, Eigen::Dynamic>  c_;
+        Eigen::Vector<float_type, Eigen::Dynamic>  h_;
+        Eigen::Vector<float_type, Eigen::Dynamic>  b_;
         Eigen::VectorXi q_;
 
         if (Gpr and Gjc and Gir)
         {
-            G_ = Eigen::Map<Eigen::SparseMatrix<long double>>(m, n, Gjc[n], Gjc, Gir, Gpr);
+            G_ = Eigen::Map<Eigen::SparseMatrix<float_type>>(m, n, Gjc[n], Gjc, Gir, Gpr);
             q_ = Eigen::Map<Eigen::VectorXi>(q, ncones);
-            h_ = Eigen::Map<Eigen::Vector<long double, Eigen::Dynamic> >(h, m);
+            h_ = Eigen::Map<Eigen::Vector<float_type, Eigen::Dynamic> >(h, m);
         }
         if (Apr and Ajc and Air)
         {
-            A_ = Eigen::Map<Eigen::SparseMatrix<long double>>(p, n, Ajc[n], Ajc, Air, Apr);
-            b_ = Eigen::Map<Eigen::Vector<long double, Eigen::Dynamic> >(b, p);
+            A_ = Eigen::Map<Eigen::SparseMatrix<float_type>>(p, n, Ajc[n], Ajc, Air, Apr);
+            b_ = Eigen::Map<Eigen::Vector<float_type, Eigen::Dynamic> >(b, p);
         }
         if (c)
         {
-            c_ = Eigen::Map<Eigen::Vector<long double, Eigen::Dynamic> >(c, n);
+            c_ = Eigen::Map<Eigen::Vector<float_type, Eigen::Dynamic> >(c, n);
         }
 
         build(G_, A_, c_, h_, b_, q_);
@@ -129,11 +129,11 @@ namespace EiCOS
         return w.i;
     }
 
-    void Solver::build(const Eigen::SparseMatrix<long double> &G,
-                       const Eigen::SparseMatrix<long double> &A,
-                       const Eigen::Vector<long double, Eigen::Dynamic>  &c,
-                       const Eigen::Vector<long double, Eigen::Dynamic>  &h,
-                       const Eigen::Vector<long double, Eigen::Dynamic>  &b,
+    void Solver::build(const Eigen::SparseMatrix<float_type> &G,
+                       const Eigen::SparseMatrix<float_type> &A,
+                       const Eigen::Vector<float_type, Eigen::Dynamic>  &c,
+                       const Eigen::Vector<float_type, Eigen::Dynamic>  &h,
+                       const Eigen::Vector<float_type, Eigen::Dynamic>  &b,
                        const Eigen::VectorXi &soc_dims)
     {
         assert(not(c.hasNaN() or h.hasNaN() or b.hasNaN()));
@@ -170,8 +170,8 @@ namespace EiCOS
         {
             SOCone &sc = so_cones[i];
             sc.dim = soc_dims[i];
-            sc.eta = 0.L;
-            sc.a = 0.L;
+            sc.eta = static_cast<float_type>(0.);
+            sc.a = static_cast<float_type>(0.);
         }
 
         allocate();
@@ -248,51 +248,51 @@ namespace EiCOS
         KKT_AG_ptr.reserve(A.nonZeros() + G.nonZeros());
     }
 
-    const Eigen::Vector<long double, Eigen::Dynamic>  &Solver::solution() const
+    const Eigen::Vector<float_type, Eigen::Dynamic>  &Solver::solution() const
     {
         return w.x;
     }
 
-    void maxRows(Eigen::Vector<long double, Eigen::Dynamic>  &e, const Eigen::SparseMatrix<long double> m)
+    void maxRows(Eigen::Vector<float_type, Eigen::Dynamic>  &e, const Eigen::SparseMatrix<float_type> m)
     {
         for (int j = 0; j < m.cols(); j++)
         {
-            for (Eigen::SparseMatrix<long double>::InnerIterator it(m, j); it; ++it)
+            for (Eigen::SparseMatrix<float_type>::InnerIterator it(m, j); it; ++it)
             {
-                e(it.row()) = std::max(std::fabs(it.value()), e(it.row()));
+                e(it.row()) = max(fabs(it.value()), e(it.row()));
             }
         }
     }
 
-    void maxCols(Eigen::Vector<long double, Eigen::Dynamic>  &e, const Eigen::SparseMatrix<long double> m)
+    void maxCols(Eigen::Vector<float_type, Eigen::Dynamic>  &e, const Eigen::SparseMatrix<float_type> m)
     {
         for (int j = 0; j < m.cols(); j++)
         {
-            for (Eigen::SparseMatrix<long double>::InnerIterator it(m, j); it; ++it)
+            for (Eigen::SparseMatrix<float_type>::InnerIterator it(m, j); it; ++it)
             {
-                e(j) = std::max(std::fabs(it.value()), e(j));
+                e(j) = max(fabs(it.value()), e(j));
             }
         }
     }
 
-    void equilibrateRows(const Eigen::Vector<long double, Eigen::Dynamic>  &e, Eigen::SparseMatrix<long double> &m)
+    void equilibrateRows(const Eigen::Vector<float_type, Eigen::Dynamic>  &e, Eigen::SparseMatrix<float_type> &m)
     {
         for (int j = 0; j < m.cols(); j++)
         {
             /* equilibrate the rows of a matrix */
-            for (Eigen::SparseMatrix<long double>::InnerIterator it(m, j); it; ++it)
+            for (Eigen::SparseMatrix<float_type>::InnerIterator it(m, j); it; ++it)
             {
                 it.valueRef() /= e(it.row());
             }
         }
     }
 
-    void equilibrateCols(const Eigen::Vector<long double, Eigen::Dynamic>  &e, Eigen::SparseMatrix<long double> &m)
+    void equilibrateCols(const Eigen::Vector<float_type, Eigen::Dynamic>  &e, Eigen::SparseMatrix<float_type> &m)
     {
         for (int j = 0; j < m.cols(); j++)
         {
             /* equilibrate the columns of a matrix */
-            for (Eigen::SparseMatrix<long double>::InnerIterator it(m, j); it; ++it)
+            for (Eigen::SparseMatrix<float_type>::InnerIterator it(m, j); it; ++it)
             {
                 it.valueRef() /= e(j);
             }
@@ -305,9 +305,9 @@ namespace EiCOS
         A_equil.resize(n_eq);
         G_equil.resize(n_ineq);
 
-        Eigen::Vector<long double, Eigen::Dynamic>  x_tmp(n_var);
-        Eigen::Vector<long double, Eigen::Dynamic>  A_tmp(n_eq);
-        Eigen::Vector<long double, Eigen::Dynamic>  G_tmp(n_ineq);
+        Eigen::Vector<float_type, Eigen::Dynamic>  x_tmp(n_var);
+        Eigen::Vector<float_type, Eigen::Dynamic>  A_tmp(n_eq);
+        Eigen::Vector<float_type, Eigen::Dynamic>  G_tmp(n_ineq);
 
         /* Initialize equilibration vector to 1 */
         x_equil.setOnes();
@@ -338,13 +338,13 @@ namespace EiCOS
             size_t ind = n_lc;
             for (const SOCone &sc : so_cones)
             {
-                const long double total = G_tmp.segment(ind, sc.dim).sum();
+                const float_type total = G_tmp.segment(ind, sc.dim).sum();
                 G_tmp.segment(ind, sc.dim).setConstant(total);
                 ind += sc.dim;
             }
 
             /* Take the square root */
-            auto sqrt_op = [](const long double a) { return std::fabs(a) < 1e-6 ? 1.L : std::sqrt(a); };
+            auto sqrt_op = [](const float_type a) { return fabs(a) < 1e-6 ? static_cast<float_type>(1.) : sqrt(a); };
             x_tmp = x_tmp.unaryExpr(sqrt_op);
             A_tmp = A_tmp.unaryExpr(sqrt_op);
             G_tmp = G_tmp.unaryExpr(sqrt_op);
@@ -373,13 +373,13 @@ namespace EiCOS
         equibrilated = true;
     }
 
-    void restore(const Eigen::Vector<long double, Eigen::Dynamic>  &d, const Eigen::Vector<long double, Eigen::Dynamic>  &e,
-                 Eigen::SparseMatrix<long double> &m)
+    void restore(const Eigen::Vector<float_type, Eigen::Dynamic>  &d, const Eigen::Vector<float_type, Eigen::Dynamic>  &e,
+                 Eigen::SparseMatrix<float_type> &m)
     {
         assert(not m.IsRowMajor);
         for (int col = 0; col < m.cols(); ++col)
         {
-            for (Eigen::SparseMatrix<long double>::InnerIterator it(m, col); it; ++it)
+            for (Eigen::SparseMatrix<float_type>::InnerIterator it(m, col); it; ++it)
             {
                 it.valueRef() *= d(it.row()) * e(it.col());
             }
@@ -408,9 +408,9 @@ namespace EiCOS
      * Returns false as soon as any multiplier or slack leaves the cone,
      * as this indicates severe problems.
      */
-    bool Solver::updateScalings(const Eigen::Vector<long double, Eigen::Dynamic>  &s,
-                                const Eigen::Vector<long double, Eigen::Dynamic>  &z,
-                                Eigen::Vector<long double, Eigen::Dynamic>  &lambda)
+    bool Solver::updateScalings(const Eigen::Vector<float_type, Eigen::Dynamic>  &s,
+                                const Eigen::Vector<float_type, Eigen::Dynamic>  &z,
+                                Eigen::Vector<float_type, Eigen::Dynamic>  &lambda)
     {
         /* LP cone */
         lp_cone.v = s.head(n_lc).cwiseQuotient(z.head(n_lc));
@@ -421,9 +421,9 @@ namespace EiCOS
         for (SOCone &sc : so_cones)
         {
             /* Check residuals and quit if they're negative */
-            const long double sres = s(cone_start) * s(cone_start) -
+            const float_type sres = s(cone_start) * s(cone_start) -
                                 s.segment(cone_start + 1, sc.dim - 1).squaredNorm();
-            const long double zres = z(cone_start) * z(cone_start) -
+            const float_type zres = z(cone_start) * z(cone_start) -
                                 z.segment(cone_start + 1, sc.dim - 1).squaredNorm();
             if (sres <= 0 or zres <= 0)
             {
@@ -431,41 +431,41 @@ namespace EiCOS
             }
 
             /* Normalize variables */
-            const long double snorm = std::sqrt(sres);
-            const long double znorm = std::sqrt(zres);
+            const float_type snorm = sqrt(sres);
+            const float_type znorm = sqrt(zres);
 
             sc.skbar = s.segment(cone_start, sc.dim) / snorm;
             sc.zkbar = z.segment(cone_start, sc.dim) / znorm;
 
             sc.eta_square = snorm / znorm;
-            sc.eta = std::sqrt(sc.eta_square);
+            sc.eta = sqrt(sc.eta_square);
 
             /* Normalized Nesterov-Todd scaling point */
-            long double gamma = 1.L + sc.skbar.dot(sc.zkbar);
-            gamma = std::sqrt(0.5L * gamma);
+            float_type gamma = static_cast<float_type>(1.) + sc.skbar.dot(sc.zkbar);
+            gamma = sqrt(static_cast<float_type>(0.5) * gamma);
 
-            const long double a = (0.5L / gamma) * (sc.skbar(0) + sc.zkbar(0));
-            sc.q = (0.5L / gamma) * (sc.skbar.tail(sc.dim - 1) -
+            const float_type a = (static_cast<float_type>(0.5) / gamma) * (sc.skbar(0) + sc.zkbar(0));
+            sc.q = (static_cast<float_type>(0.5) / gamma) * (sc.skbar.tail(sc.dim - 1) -
                                     sc.zkbar.tail(sc.dim - 1));
-            const long double w = sc.q.squaredNorm();
+            const float_type w = sc.q.squaredNorm();
 
             /* Pre-compute variables needed for KKT matrix (used in KKT scaling) */
-            const long double c = (1.L + a) + w / (1.L + a);
-            const long double d = 1.L + 2. / (1.L + a) + w / std::pow(1.L + a, 2);
+            const float_type c = (static_cast<float_type>(1.) + a) + w / (static_cast<float_type>(1.) + a);
+            const float_type d = static_cast<float_type>(1.) + 2. / (static_cast<float_type>(1.) + a) + w / pow(static_cast<float_type>(1.) + a, 2);
 
-            const long double d1 = std::max(0.L, 0.5L * (std::pow(a, 2) + w * (1.L - std::pow(c, 2) / (1.L + w * d))));
-            const long double u0_square = std::pow(a, 2) + w - d1;
+            const float_type d1 = max(static_cast<float_type>(0.), static_cast<float_type>(0.5) * (pow(a, 2) + w * (static_cast<float_type>(1.) - pow(c, 2) / (static_cast<float_type>(1.) + w * d))));
+            const float_type u0_square = pow(a, 2) + w - d1;
 
-            const long double c2byu02 = (c * c) / u0_square;
+            const float_type c2byu02 = (c * c) / u0_square;
             if (c2byu02 - d <= 0)
             {
                 return false;
             }
 
             sc.d1 = d1;
-            sc.u0 = std::sqrt(u0_square);
-            sc.u1 = std::sqrt(c2byu02);
-            sc.v1 = std::sqrt(c2byu02 - d);
+            sc.u0 = sqrt(u0_square);
+            sc.u1 = sqrt(c2byu02);
+            sc.v1 = sqrt(c2byu02 - d);
             sc.a = a;
             sc.w = w;
 
@@ -482,7 +482,7 @@ namespace EiCOS
      * Fast multiplication by scaling matrix.
      * Returns lambda = W * z
      */
-    void Solver::scale(const Eigen::Vector<long double, Eigen::Dynamic>  &z, Eigen::Vector<long double, Eigen::Dynamic>  &lambda)
+    void Solver::scale(const Eigen::Vector<float_type, Eigen::Dynamic>  &z, Eigen::Vector<float_type, Eigen::Dynamic>  &lambda)
     {
         /* LP cone */
         lambda.head(n_lc) = lp_cone.w.cwiseProduct(z.head(n_lc));
@@ -492,10 +492,10 @@ namespace EiCOS
         for (const SOCone &sc : so_cones)
         {
             /* zeta = q' * z1 */
-            const long double zeta = sc.q.dot(z.segment(cone_start + 1, sc.dim - 1));
+            const float_type zeta = sc.q.dot(z.segment(cone_start + 1, sc.dim - 1));
 
             /* factor = z0 + zeta / (1 + a); */
-            const long double factor = z(cone_start) + zeta / (1.L + sc.a);
+            const float_type factor = z(cone_start) + zeta / (static_cast<float_type>(1.) + sc.a);
 
             /* Write out result */
             lambda(cone_start) = sc.eta * (sc.a * z(cone_start) + zeta);
@@ -525,9 +525,9 @@ namespace EiCOS
      */
     exitcode Solver::checkExitConditions(bool reduced_accuracy)
     {
-        long double feastol;
-        long double abstol;
-        long double reltol;
+        float_type feastol;
+        float_type abstol;
+        float_type reltol;
 
         /* Set accuracy against which to check */
         if (reduced_accuracy)
@@ -546,7 +546,7 @@ namespace EiCOS
         }
 
         /* Optimal? */
-        if ((-w.cx > 0.L or -w.by - w.hz >= -abstol) and
+        if ((-w.cx > static_cast<float_type>(0.) or -w.by - w.hz >= -abstol) and
             (w.i.pres < feastol and w.i.dres < feastol) and
             (w.i.gap < abstol or w.i.relgap < reltol))
         {
@@ -555,12 +555,12 @@ namespace EiCOS
                 if (reduced_accuracy)
                 {
                     print("Close to optimal (within feastol={:3.1e}, reltol={:3.1e}, abstol={:3.1e}).\n",
-                          std::max(w.i.dres, w.i.pres), w.i.relgap.value_or(0.L), w.i.gap);
+                          max(w.i.dres, w.i.pres), w.i.relgap.value_or(static_cast<float_type>(0.)), w.i.gap);
                 }
                 else
                 {
                     print("Optimal (within feastol={:3.1e}, reltol={:3.1e}, abstol={:3.1e}).\n",
-                          std::max(w.i.dres, w.i.pres), w.i.relgap.value_or(0.L), w.i.gap);
+                          max(w.i.dres, w.i.pres), w.i.relgap.value_or(static_cast<float_type>(0.)), w.i.gap);
                 }
             }
 
@@ -668,7 +668,7 @@ namespace EiCOS
         }
         else
         {
-            hresy = 0.L;
+            hresy = static_cast<float_type>(0.);
         }
 
         /* rz = s + G * x - tau * h */
@@ -678,7 +678,7 @@ namespace EiCOS
 
         /* rt = kappa + c' * x + b' * y + h' * z; */
         w.cx = c.dot(w.x);
-        w.by = n_eq > 0 ? b.dot(w.y) : 0.L;
+        w.by = n_eq > 0 ? b.dot(w.y) : static_cast<float_type>(0.);
         w.hz = h.dot(w.z);
         rt = w.kap + w.cx + w.by + w.hz;
 
@@ -697,11 +697,11 @@ namespace EiCOS
         w.i.dcost = -(w.hz + w.by) / w.tau;
 
         /* Relative duality gap */
-        if (w.i.pcost < 0.L)
+        if (w.i.pcost < static_cast<float_type>(0.))
         {
             w.i.relgap = w.i.gap / (-w.i.pcost);
         }
-        else if (w.i.dcost > 0.L)
+        else if (w.i.dcost > static_cast<float_type>(0.))
         {
             w.i.relgap = w.i.gap / w.i.dcost;
         }
@@ -711,20 +711,20 @@ namespace EiCOS
         }
 
         /* Residuals */
-        const long double nry = n_eq > 0 ? ry.norm() / std::max(resy0 + nx, 1.L) : 0.L;
-        const long double nrz = rz.norm() / std::max(resz0 + nx + ns, 1.L);
-        w.i.pres = std::max(nry, nrz) / w.tau;
-        w.i.dres = rx.norm() / std::max(resx0 + ny + nz, 1.L) / w.tau;
+        const float_type nry = n_eq > 0 ? ry.norm() / max(resy0 + nx, static_cast<float_type>(1.)) : static_cast<float_type>(0.);
+        const float_type nrz = rz.norm() / max(resz0 + nx + ns, static_cast<float_type>(1.));
+        w.i.pres = max(nry, nrz) / w.tau;
+        w.i.dres = rx.norm() / max(resx0 + ny + nz, static_cast<float_type>(1.)) / w.tau;
 
         /* Infeasibility measures */
-        if ((w.hz + w.by) / std::max(ny + nz, 1.L) < -settings.reltol)
+        if ((w.hz + w.by) / max(ny + nz, static_cast<float_type>(1.)) < -settings.reltol)
         {
-            w.i.pinfres = hresx / std::max(ny + nz, 1.L);
+            w.i.pinfres = hresx / max(ny + nz, static_cast<float_type>(1.));
         }
-        if (w.cx / std::max(nx, 1.L) < -settings.reltol)
+        if (w.cx / max(nx, static_cast<float_type>(1.)) < -settings.reltol)
         {
-            w.i.dinfres = std::max(hresy / std::max(nx, 1.L),
-                                   hresz / std::max(nx + ns, 1.L));
+            w.i.dinfres = max(hresy / max(nx, static_cast<float_type>(1.)),
+                                   hresz / max(nx + ns, static_cast<float_type>(1.)));
         }
 
         print_dbg("TAU={:6.4e}  KAP={:6.4e}  PINFRES={:6.4e}  DINFRES={:6.4e}\n",
@@ -758,11 +758,11 @@ namespace EiCOS
      * If it is already in the cone, r is simply copied to s.
      * Otherwise s = r + (1 + alpha) * e where alpha is the biggest residual.
      */
-    void Solver::bringToCone(const Eigen::Vector<long double, Eigen::Dynamic>  &r, Eigen::Vector<long double, Eigen::Dynamic>  &s)
+    void Solver::bringToCone(const Eigen::Vector<float_type, Eigen::Dynamic>  &r, Eigen::Vector<float_type, Eigen::Dynamic>  &s)
     {
-        long double alpha = -settings.gamma;
+        float_type alpha = -settings.gamma;
 
-        /* ===== 1.L Find maximum residual ===== */
+        /* ===== static_cast<float_type>(1.) Find maximum residual ===== */
 
         /* LP cone */
         for (size_t i = 0; i < n_lc; i++)
@@ -777,7 +777,7 @@ namespace EiCOS
         size_t cone_start = n_lc;
         for (const SOCone &sc : so_cones)
         {
-            const long double cres = r(cone_start) -
+            const float_type cres = r(cone_start) -
                                 r.segment(cone_start + 1, sc.dim - 1).norm();
             cone_start += sc.dim;
 
@@ -789,7 +789,7 @@ namespace EiCOS
 
         /* ===== 2. Compute s = r + (1 + alpha) * e ===== */
 
-        alpha += 1.L;
+        alpha += static_cast<float_type>(1.);
 
         /* LP cone */
         s = r;
@@ -811,7 +811,7 @@ namespace EiCOS
         /* LP cone */
         for (size_t k = 0; k < n_lc; k++)
         {
-            *KKT_V_ptr[ptr_i++] = -1.L;
+            *KKT_V_ptr[ptr_i++] = -static_cast<float_type>(1.);
         }
 
         /* SO cone */
@@ -820,26 +820,26 @@ namespace EiCOS
             /* D */
             for (size_t k = 0; k < sc.dim; k++)
             {
-                *KKT_V_ptr[ptr_i++] = -1.L;
+                *KKT_V_ptr[ptr_i++] = -static_cast<float_type>(1.);
             }
 
             /* -1 on diagonal */
-            *KKT_V_ptr[ptr_i++] = -1.L;
+            *KKT_V_ptr[ptr_i++] = -static_cast<float_type>(1.);
 
             /* -v */
             for (size_t k = 1; k < sc.dim; k++)
             {
-                *KKT_V_ptr[ptr_i++] = 0.L;
+                *KKT_V_ptr[ptr_i++] = static_cast<float_type>(0.);
             }
 
             /* 1 on diagonal */
-            *KKT_V_ptr[ptr_i++] = 1.L;
+            *KKT_V_ptr[ptr_i++] = static_cast<float_type>(1.);
 
             /* -u */
-            *KKT_V_ptr[ptr_i++] = 0.L;
+            *KKT_V_ptr[ptr_i++] = static_cast<float_type>(0.);
             for (size_t k = 1; k < sc.dim; k++)
             {
-                *KKT_V_ptr[ptr_i++] = 0.L;
+                *KKT_V_ptr[ptr_i++] = static_cast<float_type>(0.);
             }
         }
         assert(ptr_i == KKT_V_ptr.size());
@@ -886,12 +886,12 @@ namespace EiCOS
         rhs2.head(n_var) = -c;
 
         /*  Set up scalings of problem data */
-        const long double scale_rx = c.norm();
-        const long double scale_ry = b.norm();
-        const long double scale_rz = h.norm();
-        resx0 = std::max(1.L, scale_rx);
-        resy0 = std::max(1.L, scale_ry);
-        resz0 = std::max(1.L, scale_rz);
+        const float_type scale_rx = c.norm();
+        const float_type scale_ry = b.norm();
+        const float_type scale_rz = h.norm();
+        resx0 = max(static_cast<float_type>(1.), scale_rx);
+        resy0 = max(static_cast<float_type>(1.), scale_ry);
+        resz0 = max(static_cast<float_type>(1.), scale_rz);
 
         /* Perform symbolic decomposition */
         ldlt.analyzePattern(K);
@@ -926,10 +926,10 @@ namespace EiCOS
          */
 
         /* Solve for RHS [0; b; h] */
-        Eigen::Vector<long double, Eigen::Dynamic>  dx1(n_var);
-        Eigen::Vector<long double, Eigen::Dynamic>  dy1(n_eq);
-        Eigen::Vector<long double, Eigen::Dynamic>  dz1(n_ineq);
-        print_dbg("Solving for RHS1.L\n");
+        Eigen::Vector<float_type, Eigen::Dynamic>  dx1(n_var);
+        Eigen::Vector<float_type, Eigen::Dynamic>  dy1(n_eq);
+        Eigen::Vector<float_type, Eigen::Dynamic>  dz1(n_ineq);
+        print_dbg("Solving for RHSstatic_cast<float_type>(1.)\n");
         w.i.nitref1 = solveKKT(rhs1, dx1, dy1, dz1, true);
 
         /* Copy out initial value of x */
@@ -959,9 +959,9 @@ namespace EiCOS
          */
 
         /* Solve for RHS [-c; 0; 0] */
-        Eigen::Vector<long double, Eigen::Dynamic>  dx2(n_var);
-        Eigen::Vector<long double, Eigen::Dynamic>  dy2(n_eq);
-        Eigen::Vector<long double, Eigen::Dynamic>  dz2(n_ineq);
+        Eigen::Vector<float_type, Eigen::Dynamic>  dx2(n_var);
+        Eigen::Vector<float_type, Eigen::Dynamic>  dy2(n_eq);
+        Eigen::Vector<float_type, Eigen::Dynamic>  dz2(n_ineq);
         print_dbg("Solving for RHS2.\n");
         w.i.nitref2 = solveKKT(rhs2, dx2, dy2, dz2, true);
 
@@ -980,16 +980,16 @@ namespace EiCOS
         rhs1.head(n_var) = -c;
 
         /* Other variables */
-        w.kap = 1.L,
-        w.tau = 1.L,
+        w.kap = static_cast<float_type>(1.),
+        w.tau = static_cast<float_type>(1.),
 
-        w.i.step = 0.L;
-        w.i.step_aff = 0.L;
+        w.i.step = static_cast<float_type>(0.);
+        w.i.step_aff = static_cast<float_type>(0.);
         w.i.pinf = false;
         w.i.dinf = false;
         w.i.iter_max = settings.iter_max;
 
-        long double pres_prev = std::numeric_limits<long double>::max();
+        float_type pres_prev = std::numeric_limits<float_type>::max();
 
         /* Main interior point loop */
         for (w.i.iter = 0; w.i.iter <= w.i.iter_max; w.i.iter++)
@@ -1008,7 +1008,7 @@ namespace EiCOS
              * accordingly. If not even reduced precision is reached, return the flag numerics.
              */
             if (w.i.iter > 0 and
-                (w.i.pres > settings.safeguard * pres_prev or w.i.gap < 0.L))
+                (w.i.pres > settings.safeguard * pres_prev or w.i.gap < static_cast<float_type>(0.)))
             {
                 if (settings.verbose)
                 {
@@ -1030,7 +1030,7 @@ namespace EiCOS
                     if (settings.verbose)
                     {
                         print("\nNUMERICAL PROBLEMS (reached feastol={:3.1e}, reltol={:3.1e}, abstol={:3.1e}).",
-                              std::max(w.i.dres, w.i.pres), w.i.relgap.value_or(0.L), w.i.gap);
+                              max(w.i.dres, w.i.pres), w.i.relgap.value_or(static_cast<float_type>(0.)), w.i.gap);
                     }
                     break;
                 }
@@ -1074,7 +1074,7 @@ namespace EiCOS
                         if (settings.verbose)
                         {
                             print("\nNUMERICAL PROBLEMS (reached feastol={:3.1e}, reltol={:3.1e}, abstol={:3.1e}).",
-                                  std::max(w.i.dres, w.i.pres), w.i.relgap.value_or(0.L), w.i.gap);
+                                  max(w.i.dres, w.i.pres), w.i.relgap.value_or(static_cast<float_type>(0.)), w.i.gap);
                         }
                     }
                     break;
@@ -1108,7 +1108,7 @@ namespace EiCOS
                     break;
                 }
                 /* Stuck on NAN? */
-                else if (std::isnan(w.i.pcost))
+                else if (isnan(w.i.pcost))
                 {
                     if (settings.verbose)
                         print("\nReached NaN dead end, ");
@@ -1179,10 +1179,10 @@ namespace EiCOS
             solveKKT(rhs2, dx2, dy2, dz2, false);
 
             /* dtau_denom = kap / tau - (c' * x1 + b * y1 + h' * z1); */
-            const long double dtau_denom = w.kap / w.tau - c.dot(dx1) - b.dot(dy1) - h.dot(dz1);
+            const float_type dtau_denom = w.kap / w.tau - c.dot(dx1) - b.dot(dy1) - h.dot(dz1);
 
             /* dtauaff = (dt + c' * x2 + b * y2 + h' * z2) / dtau_denom; */
-            const long double dtauaff = (rt - w.kap + c.dot(dx2) + b.dot(dy2) + h.dot(dz2)) / dtau_denom;
+            const float_type dtauaff = (rt - w.kap + c.dot(dx2) + b.dot(dy2) + h.dot(dz2)) / dtau_denom;
 
             /* dzaff = dz2 + dtau_aff * dz1 */
             /* Let dz2   = dzaff, use this in the linesearch for unsymmetric cones */
@@ -1195,14 +1195,14 @@ namespace EiCOS
             dsaff_by_W = -W_times_dzaff - w.lambda;
 
             /* dkapaff = -(bkap + kap * dtauaff) / tau; bkap = kap * tau*/
-            const long double dkapaff = -w.kap - w.kap / w.tau * dtauaff;
+            const float_type dkapaff = -w.kap - w.kap / w.tau * dtauaff;
 
             /* Line search on W \ dsaff and W * dzaff */
             print_dbg("Performing line search on affine direction.\n");
             w.i.step_aff = lineSearch(w.lambda, dsaff_by_W, W_times_dzaff, w.tau, dtauaff, w.kap, dkapaff);
 
             /* Centering parameter */
-            const long double sigma = std::clamp(std::pow(1.L - w.i.step_aff, 3),
+            const float_type sigma = std::clamp(pow(static_cast<float_type>(1.) - w.i.step_aff, 3),
                                             settings.sigmamin, settings.sigmamax);
             w.i.sigma = sigma;
 
@@ -1212,10 +1212,10 @@ namespace EiCOS
             w.i.nitref3 = solveKKT(rhs2, dx2, dy2, dz2, 0);
 
             /* bkap = kap * tau + dkapaff * dtauaff - sigma * w.i.mu; */
-            const long double bkap = w.kap * w.tau + dkapaff * dtauaff - sigma * w.i.mu;
+            const float_type bkap = w.kap * w.tau + dkapaff * dtauaff - sigma * w.i.mu;
 
             /* dtau = ((1 - sigma) * rt - bkap / tau + c' * x2 + by2 + h' * z2) / dtau_denom; */
-            const long double dtau = ((1.L - sigma) * rt - bkap / w.tau + c.dot(dx2) + b.dot(dy2) + h.dot(dz2)) / dtau_denom;
+            const float_type dtau = ((static_cast<float_type>(1.) - sigma) * rt - bkap / w.tau + c.dot(dx2) + b.dot(dy2) + h.dot(dz2)) / dtau_denom;
 
             /**
              * dx = x2 + dtau * x1
@@ -1232,7 +1232,7 @@ namespace EiCOS
             dsaff_by_W = -(dsaff_by_W + W_times_dzaff);
 
             /* dkap = -(bkap + kap * dtau) / tau; */
-            const long double dkap = -(bkap + w.kap * dtau) / w.tau;
+            const float_type dkap = -(bkap + w.kap * dtau) / w.tau;
 
             /* Line search on combined direction */
             print_dbg("Performing line search on combined direction.\n");
@@ -1256,13 +1256,13 @@ namespace EiCOS
         backscale();
 
         if (settings.verbose)
-            print("Runtime: {}ms\n", std::chrono::duration<long double>(std::chrono::high_resolution_clock::now() - t0).count());
+            print("Runtime: {}ms\n", std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - t0).count());
 
         return code;
     }
 
     /**
-     * Scales variables by 1.L0/tau, i.e. computes
+     * Scales variables by static_cast<float_type>(1.)0/tau, i.e. computes
      * x = x / tau
      * y = y / tau
      * z = z / tau
@@ -1281,14 +1281,14 @@ namespace EiCOS
      */
     void Solver::RHScombined()
     {
-        Eigen::Vector<long double, Eigen::Dynamic>  ds1(n_ineq);
-        Eigen::Vector<long double, Eigen::Dynamic>  ds2(n_ineq);
+        Eigen::Vector<float_type, Eigen::Dynamic>  ds1(n_ineq);
+        Eigen::Vector<float_type, Eigen::Dynamic>  ds2(n_ineq);
 
         /* ds = lambda o lambda + W \ s o Wz - sigma * mu * e) */
         conicProduct(w.lambda, w.lambda, ds1);
         conicProduct(dsaff_by_W, W_times_dzaff, ds2);
 
-        const long double sigmamu = w.i.sigma * w.i.mu;
+        const float_type sigmamu = w.i.sigma * w.i.mu;
         ds1.head(n_lc) += ds2.head(n_lc);
         ds1.head(n_lc).array() -= sigmamu;
 
@@ -1305,7 +1305,7 @@ namespace EiCOS
         scale(dsaff_by_W, ds1);
 
         /* copy in RHS */
-        const long double one_minus_sigma = 1.L - w.i.sigma;
+        const float_type one_minus_sigma = static_cast<float_type>(1.) - w.i.sigma;
 
         rhs2.head(n_var + n_eq) *= one_minus_sigma;
         rhs2.segment(n_var + n_eq, n_lc) = -one_minus_sigma * rz.head(n_lc) +
@@ -1319,17 +1319,17 @@ namespace EiCOS
             k += sc.dim;
 
             rhs_index += sc.dim;
-            rhs2(rhs_index++) = 0.L;
-            rhs2(rhs_index++) = 0.L;
+            rhs2(rhs_index++) = static_cast<float_type>(0.);
+            rhs2(rhs_index++) = static_cast<float_type>(0.);
         }
     }
 
     /**
      * Conic division, implements the "\" operator, v = u \ w
      */
-    void Solver::conicDivision(const Eigen::Vector<long double, Eigen::Dynamic>  &u,
-                               const Eigen::Vector<long double, Eigen::Dynamic>  &w,
-                               Eigen::Vector<long double, Eigen::Dynamic>  &v)
+    void Solver::conicDivision(const Eigen::Vector<float_type, Eigen::Dynamic>  &u,
+                               const Eigen::Vector<float_type, Eigen::Dynamic>  &w,
+                               Eigen::Vector<float_type, Eigen::Dynamic>  &v)
     {
         /* LP cone */
         v.head(n_lc) = w.head(n_lc).cwiseQuotient(u.head(n_lc));
@@ -1338,11 +1338,11 @@ namespace EiCOS
         size_t cone_start = n_lc;
         for (const SOCone &sc : so_cones)
         {
-            const long double u0 = u(cone_start);
-            const long double w0 = w(cone_start);
-            const long double rho = u0 * u0 - u.segment(cone_start + 1, sc.dim - 1).squaredNorm();
-            const long double zeta = u.segment(cone_start + 1, sc.dim - 1).dot(w.segment(cone_start + 1, sc.dim - 1));
-            const long double factor = (zeta / u0 - w0) / rho;
+            const float_type u0 = u(cone_start);
+            const float_type w0 = w(cone_start);
+            const float_type rho = u0 * u0 - u.segment(cone_start + 1, sc.dim - 1).squaredNorm();
+            const float_type zeta = u.segment(cone_start + 1, sc.dim - 1).dot(w.segment(cone_start + 1, sc.dim - 1));
+            const float_type factor = (zeta / u0 - w0) / rho;
             v(cone_start) = (u0 * w0 - zeta) / rho;
             v.segment(cone_start + 1, sc.dim - 1) = factor * u.segment(cone_start + 1, sc.dim - 1) +
                                                     w.segment(cone_start + 1, sc.dim - 1) / u0;
@@ -1354,22 +1354,22 @@ namespace EiCOS
      * Conic product, implements the "o" operator, w = u o v
      * and returns e' * w (where e is the conic 1-vector)
      */
-    long double Solver::conicProduct(const Eigen::Vector<long double, Eigen::Dynamic>  &u,
-                                const Eigen::Vector<long double, Eigen::Dynamic>  &v,
-                                Eigen::Vector<long double, Eigen::Dynamic>  &w)
+    float_type Solver::conicProduct(const Eigen::Vector<float_type, Eigen::Dynamic>  &u,
+                                const Eigen::Vector<float_type, Eigen::Dynamic>  &v,
+                                Eigen::Vector<float_type, Eigen::Dynamic>  &w)
     {
         /* LP cone */
         w.head(n_lc) = u.head(n_lc).cwiseProduct(v.head(n_lc));
-        long double mu = w.head(n_lc).lpNorm<1>();
+        float_type mu = w.head(n_lc).lpNorm<1>();
 
         /* SO cone */
         size_t cone_start = n_lc;
         for (const SOCone &sc : so_cones)
         {
-            const long double u0 = u(cone_start);
-            const long double v0 = v(cone_start);
+            const float_type u0 = u(cone_start);
+            const float_type v0 = v(cone_start);
             w(cone_start) = u.segment(cone_start, sc.dim).dot(v.segment(cone_start, sc.dim));
-            mu += std::abs(w(cone_start));
+            mu += abs(w(cone_start));
             w.segment(cone_start + 1, sc.dim - 1) = u0 * v.segment(cone_start + 1, sc.dim - 1) +
                                                     v0 * u.segment(cone_start + 1, sc.dim - 1);
             cone_start += sc.dim;
@@ -1377,38 +1377,38 @@ namespace EiCOS
         return mu;
     }
 
-    long double Solver::lineSearch(Eigen::Vector<long double, Eigen::Dynamic>  &lambda, Eigen::Vector<long double, Eigen::Dynamic>  &ds, Eigen::Vector<long double, Eigen::Dynamic>  &dz,
-                              long double tau, long double dtau, long double kap, long double dkap)
+    float_type Solver::lineSearch(Eigen::Vector<float_type, Eigen::Dynamic>  &lambda, Eigen::Vector<float_type, Eigen::Dynamic>  &ds, Eigen::Vector<float_type, Eigen::Dynamic>  &dz,
+                              float_type tau, float_type dtau, float_type kap, float_type dkap)
     {
         /* LP cone */
-        long double alpha;
+        float_type alpha;
         if (n_lc > 0)
         {
-            const long double rhomin = (ds.head(n_lc).cwiseQuotient(lambda.head(n_lc))).minCoeff();
-            const long double sigmamin = (dz.head(n_lc).cwiseQuotient(lambda.head(n_lc))).minCoeff();
-            const long double eps = 1e-13;
+            const float_type rhomin = (ds.head(n_lc).cwiseQuotient(lambda.head(n_lc))).minCoeff();
+            const float_type sigmamin = (dz.head(n_lc).cwiseQuotient(lambda.head(n_lc))).minCoeff();
+            const float_type eps = 1e-13;
             if (-sigmamin > -rhomin)
             {
-                alpha = sigmamin < 0.L ? 1.L / (-sigmamin) : 1.L / eps;
+                alpha = sigmamin < static_cast<float_type>(0.) ? static_cast<float_type>(1.) / (-sigmamin) : static_cast<float_type>(1.) / eps;
             }
             else
             {
-                alpha = rhomin < 0.L ? 1.L / (-rhomin) : 1.L / eps;
+                alpha = rhomin < static_cast<float_type>(0.) ? static_cast<float_type>(1.) / (-rhomin) : static_cast<float_type>(1.) / eps;
             }
         }
         else
         {
-            alpha = 10.L;
+            alpha = static_cast<float_type>(10.);
         }
 
         /* tau and kappa */
-        const long double minus_tau_by_dtau = -tau / dtau;
-        const long double minus_kap_by_dkap = -kap / dkap;
-        if (minus_tau_by_dtau > 0.L and minus_tau_by_dtau < alpha)
+        const float_type minus_tau_by_dtau = -tau / dtau;
+        const float_type minus_kap_by_dkap = -kap / dkap;
+        if (minus_tau_by_dtau > static_cast<float_type>(0.) and minus_tau_by_dtau < alpha)
         {
             alpha = minus_tau_by_dtau;
         }
-        if (minus_kap_by_dkap > 0.L and minus_kap_by_dkap < alpha)
+        if (minus_kap_by_dkap > static_cast<float_type>(0.) and minus_kap_by_dkap < alpha)
         {
             alpha = minus_kap_by_dkap;
         }
@@ -1418,45 +1418,45 @@ namespace EiCOS
         for (const SOCone &sc : so_cones)
         {
             /* Normalize */
-            const long double lknorm2 = std::pow(lambda(cone_start), 2) -
+            const float_type lknorm2 = pow(lambda(cone_start), 2) -
                                    lambda.segment(cone_start + 1, sc.dim - 1).squaredNorm();
-            if (lknorm2 <= 0.L)
+            if (lknorm2 <= static_cast<float_type>(0.))
                 continue;
 
-            const long double lknorm = std::sqrt(lknorm2);
-            const Eigen::Vector<long double, Eigen::Dynamic>  lkbar = lambda.segment(cone_start, sc.dim) / lknorm;
+            const float_type lknorm = sqrt(lknorm2);
+            const Eigen::Vector<float_type, Eigen::Dynamic>  lkbar = lambda.segment(cone_start, sc.dim) / lknorm;
 
-            const long double lknorminv = 1.L / lknorm;
+            const float_type lknorminv = static_cast<float_type>(1.) / lknorm;
 
             /* Calculate products */
-            const long double lkbar_times_dsk = lkbar(0) * ds(cone_start) -
+            const float_type lkbar_times_dsk = lkbar(0) * ds(cone_start) -
                                            lkbar.segment(1, sc.dim - 1).dot(ds.segment(cone_start + 1, sc.dim - 1));
-            const long double lkbar_times_dzk = lkbar(0) * dz(cone_start) -
+            const float_type lkbar_times_dzk = lkbar(0) * dz(cone_start) -
                                            lkbar.segment(1, sc.dim - 1).dot(dz.segment(cone_start + 1, sc.dim - 1));
 
             /* Now construct rhok and sigmak, the first element is different */
-            long double factor;
+            float_type factor;
 
-            Eigen::Vector<long double, Eigen::Dynamic>  rho(sc.dim);
+            Eigen::Vector<float_type, Eigen::Dynamic>  rho(sc.dim);
             rho(0) = lknorminv * lkbar_times_dsk;
-            factor = (lkbar_times_dsk + ds(cone_start)) / (lkbar(0) + 1.L);
+            factor = (lkbar_times_dsk + ds(cone_start)) / (lkbar(0) + static_cast<float_type>(1.));
             rho.tail(sc.dim - 1) = lknorminv * (ds.segment(cone_start + 1, sc.dim - 1) -
                                                 factor * lkbar.segment(1, sc.dim - 1));
-            const long double rhonorm = rho.tail(sc.dim - 1).norm() - rho(0);
+            const float_type rhonorm = rho.tail(sc.dim - 1).norm() - rho(0);
 
-            Eigen::Vector<long double, Eigen::Dynamic>  sigma(sc.dim);
+            Eigen::Vector<float_type, Eigen::Dynamic>  sigma(sc.dim);
             sigma(0) = lknorminv * lkbar_times_dzk;
-            factor = (lkbar_times_dzk + dz(cone_start)) / (lkbar(0) + 1.L);
+            factor = (lkbar_times_dzk + dz(cone_start)) / (lkbar(0) + static_cast<float_type>(1.));
             sigma.tail(sc.dim - 1) = lknorminv * (dz.segment(cone_start + 1, sc.dim - 1) -
                                                   factor * lkbar.segment(1, sc.dim - 1));
-            const long double sigmanorm = sigma.tail(sc.dim - 1).norm() - sigma(0);
+            const float_type sigmanorm = sigma.tail(sc.dim - 1).norm() - sigma(0);
 
             /* Update alpha */
-            const long double conic_step = std::max({0.L, sigmanorm, rhonorm});
+            const float_type conic_step = max(static_cast<float_type>(0.), max(sigmanorm, rhonorm));
 
-            if (conic_step != 0.L)
+            if (conic_step != static_cast<float_type>(0.))
             {
-                alpha = std::min(1.L / conic_step, alpha);
+                alpha = std::min(static_cast<float_type>(1.) / conic_step, alpha);
             }
 
             cone_start += sc.dim;
@@ -1468,24 +1468,24 @@ namespace EiCOS
         return alpha;
     }
 
-    size_t Solver::solveKKT(const Eigen::Vector<long double, Eigen::Dynamic>  &rhs, // dim_K
-                            Eigen::Vector<long double, Eigen::Dynamic>  &dx,        // n_var
-                            Eigen::Vector<long double, Eigen::Dynamic>  &dy,        // n_eq
-                            Eigen::Vector<long double, Eigen::Dynamic>  &dz,        // n_ineq
+    size_t Solver::solveKKT(const Eigen::Vector<float_type, Eigen::Dynamic>  &rhs, // dim_K
+                            Eigen::Vector<float_type, Eigen::Dynamic>  &dx,        // n_var
+                            Eigen::Vector<float_type, Eigen::Dynamic>  &dy,        // n_eq
+                            Eigen::Vector<float_type, Eigen::Dynamic>  &dz,        // n_ineq
                             bool initialize)
     {
-        Eigen::Vector<long double, Eigen::Dynamic>  x = ldlt.solve(rhs);
+        Eigen::Vector<float_type, Eigen::Dynamic>  x = ldlt.solve(rhs);
 
-        const long double error_threshold = (1.L + rhs.lpNorm<Eigen::Infinity>()) * settings.linsysacc;
+        const float_type error_threshold = (static_cast<float_type>(1.) + rhs.lpNorm<Eigen::Infinity>()) * settings.linsysacc;
 
-        long double nerr_prev = std::numeric_limits<long double>::max(); // Previous refinement error
-        Eigen::Vector<long double, Eigen::Dynamic>  dx_ref(dim_K);                         // Refinement vector
+        float_type nerr_prev = std::numeric_limits<float_type>::max(); // Previous refinement error
+        Eigen::Vector<float_type, Eigen::Dynamic>  dx_ref(dim_K);                         // Refinement vector
 
         const size_t mtilde = n_ineq + 2 * so_cones.size(); // Size of expanded cone block
 
-        const Eigen::Vector<long double, Eigen::Dynamic>  &bx = rhs.head(n_var);
-        const Eigen::Vector<long double, Eigen::Dynamic>  &by = rhs.segment(n_var, n_eq);
-        const Eigen::Vector<long double, Eigen::Dynamic>  &bz = rhs.tail(mtilde);
+        const Eigen::Vector<float_type, Eigen::Dynamic>  &bx = rhs.head(n_var);
+        const Eigen::Vector<float_type, Eigen::Dynamic>  &by = rhs.segment(n_var, n_eq);
+        const Eigen::Vector<float_type, Eigen::Dynamic>  &bz = rhs.tail(mtilde);
 
         print_dbg("IR: it  ||ex||   ||ey||   ||ez|| (threshold: {:2.3e})\n", error_threshold);
         print_dbg("    --------------------------------------------------\n");
@@ -1495,8 +1495,8 @@ namespace EiCOS
         for (k_ref = 0; k_ref <= settings.nitref; k_ref++)
         {
             /* Copy solution into arrays */
-            const Eigen::Vector<long double, Eigen::Dynamic>  &dx = x.head(n_var);
-            const Eigen::Vector<long double, Eigen::Dynamic>  &dy = x.segment(n_var, n_eq);
+            const Eigen::Vector<float_type, Eigen::Dynamic>  &dx = x.head(n_var);
+            const Eigen::Vector<float_type, Eigen::Dynamic>  &dy = x.segment(n_var, n_eq);
             dz.head(n_lc) = x.segment(n_var + n_eq, n_lc);
             size_t dz_index = n_lc;
             size_t x_index = n_var + n_eq + n_lc;
@@ -1512,30 +1512,30 @@ namespace EiCOS
 
             /* Error on dx */
             /* ex = bx - A' * dy - G' * dz */
-            Eigen::Vector<long double, Eigen::Dynamic>  ex = bx - Gt * dz;
+            Eigen::Vector<float_type, Eigen::Dynamic>  ex = bx - Gt * dz;
             if (n_eq > 0)
             {
                 ex -= At * dy;
             }
             ex -= settings.deltastat * dx;
-            const long double nex = ex.lpNorm<Eigen::Infinity>();
+            const float_type nex = ex.lpNorm<Eigen::Infinity>();
 
             /* Error on dy */
             /* ey = by - A * dx */
-            Eigen::Vector<long double, Eigen::Dynamic>  ey = by;
+            Eigen::Vector<float_type, Eigen::Dynamic>  ey = by;
             if (n_eq > 0)
             {
                 ey -= A * dx;
             }
             ey += settings.deltastat * dy;
-            const long double ney = ey.lpNorm<Eigen::Infinity>();
+            const float_type ney = ey.lpNorm<Eigen::Infinity>();
 
             /* Error on ez */
             /* ez = bz - G * dx + V * dz_true */
-            Eigen::Vector<long double, Eigen::Dynamic>  Gdx = G * dx;
+            Eigen::Vector<float_type, Eigen::Dynamic>  Gdx = G * dx;
 
             /* LP cone */
-            Eigen::Vector<long double, Eigen::Dynamic>  ez(mtilde);
+            Eigen::Vector<float_type, Eigen::Dynamic>  ez(mtilde);
             ez.head(n_lc) = bz.head(n_lc) - Gdx.head(n_lc) +
                             settings.deltastat * dz.head(n_lc);
 
@@ -1550,12 +1550,12 @@ namespace EiCOS
                 dz_index += sc.dim;
                 ez_index += sc.dim;
                 ez(ez_index - 1) -= settings.deltastat * dz(dz_index - 1);
-                ez(ez_index++) = 0.L;
-                ez(ez_index++) = 0.L;
+                ez(ez_index++) = static_cast<float_type>(0.);
+                ez(ez_index++) = static_cast<float_type>(0.);
             }
             assert(ez_index == mtilde and dz_index == n_ineq);
 
-            const Eigen::Vector<long double, Eigen::Dynamic>  &dz_true = x.tail(mtilde);
+            const Eigen::Vector<float_type, Eigen::Dynamic>  &dz_true = x.tail(mtilde);
             if (initialize)
             {
                 ez += dz_true;
@@ -1564,15 +1564,15 @@ namespace EiCOS
             {
                 scale2add(dz_true, ez);
             }
-            const long double nez = ez.lpNorm<Eigen::Infinity>();
+            const float_type nez = ez.lpNorm<Eigen::Infinity>();
 
             print_dbg("     {}   {:.1g}    {:.1g}    {:.1g} \n", k_ref, nex, ney, nez);
 
             /* maximum error (infinity norm of e) */
-            long double nerr = std::max(nex, nez);
+            float_type nerr = max(nex, nez);
             if (n_eq > 0)
             {
-                nerr = std::max(nerr, ney);
+                nerr = max(nerr, ney);
             }
 
             /* Check whether refinement brought decrease */
@@ -1594,7 +1594,7 @@ namespace EiCOS
             nerr_prev = nerr;
 
             /* Solve for refinement */
-            Eigen::Vector<long double, Eigen::Dynamic>  e(dim_K);
+            Eigen::Vector<float_type, Eigen::Dynamic>  e(dim_K);
             e << ex, ey, ez;
             dx_ref = ldlt.solve(e);
 
@@ -1626,7 +1626,7 @@ namespace EiCOS
      * Computes y += W^2 * x;
      *
      */
-    void Solver::scale2add(const Eigen::Vector<long double, Eigen::Dynamic>  &x, Eigen::Vector<long double, Eigen::Dynamic>  &y)
+    void Solver::scale2add(const Eigen::Vector<float_type, Eigen::Dynamic>  &x, Eigen::Vector<float_type, Eigen::Dynamic>  &y)
     {
         /* LP cone */
         y.head(n_lc) += lp_cone.v.cwiseProduct(x.head(n_lc));
@@ -1644,11 +1644,11 @@ namespace EiCOS
             y(i1) += sc.eta_square * (sc.d1 * x(i1) + sc.u0 * x(i4));
 
             /* y2 += x2 + v1 * q * x3 + u1 * q * x4 */
-            const long double v1x3_plus_u1x4 = sc.v1 * x(i3) + sc.u1 * x(i4);
+            const float_type v1x3_plus_u1x4 = sc.v1 * x(i3) + sc.u1 * x(i4);
             y.segment(i2, sc.dim - 1) += sc.eta_square * (x.segment(i2, sc.dim - 1) +
                                                           v1x3_plus_u1x4 * sc.q);
 
-            const long double qtx2 = sc.q.dot(x.segment(i2, sc.dim - 1));
+            const float_type qtx2 = sc.q.dot(x.segment(i2, sc.dim - 1));
 
             /* y3 += v1 * q' * x2 + x3 */
             y(i3) += sc.eta_square * (sc.v1 * qtx2 + x(i3));
@@ -1759,7 +1759,7 @@ namespace EiCOS
         }
         K.reserve(K_nonzeros);
 
-        std::vector<Eigen::Triplet<long double>> K_triplets;
+        std::vector<Eigen::Triplet<float_type>> K_triplets;
         K_triplets.reserve(K_nonzeros);
 
         /* I (1,1) Static regularization */
@@ -1778,7 +1778,7 @@ namespace EiCOS
         /* A' (1,2) */
         for (int col = 0; col < At.cols(); col++)
         {
-            for (Eigen::SparseMatrix<long double>::InnerIterator it(At, col); it; ++it)
+            for (Eigen::SparseMatrix<float_type>::InnerIterator it(At, col); it; ++it)
             {
                 K_triplets.emplace_back(it.row(), A.cols() + col, it.value());
             }
@@ -1792,7 +1792,7 @@ namespace EiCOS
             /* Linear block */
             for (size_t col = 0; col < n_lc; col++)
             {
-                for (Eigen::SparseMatrix<long double>::InnerIterator it(Gt, col_Gt); it; ++it)
+                for (Eigen::SparseMatrix<float_type>::InnerIterator it(Gt, col_Gt); it; ++it)
                 {
                     K_triplets.emplace_back(it.row(), col_K, it.value());
                 }
@@ -1805,7 +1805,7 @@ namespace EiCOS
             {
                 for (size_t col = 0; col < sc.dim; col++)
                 {
-                    for (Eigen::SparseMatrix<long double>::InnerIterator it(Gt, col_Gt); it; ++it)
+                    for (Eigen::SparseMatrix<float_type>::InnerIterator it(Gt, col_Gt); it; ++it)
                     {
                         K_triplets.emplace_back(it.row(), col_K, it.value());
                     }
@@ -1825,7 +1825,7 @@ namespace EiCOS
             /* First identity block */
             for (size_t k = 0; k < n_lc; k++)
             {
-                K_triplets.emplace_back(diag_idx, diag_idx, -1.L);
+                K_triplets.emplace_back(diag_idx, diag_idx, -static_cast<float_type>(1.));
                 diag_idx++;
             }
 
@@ -1850,27 +1850,27 @@ namespace EiCOS
                 /* D */
                 for (size_t k = 0; k < sc.dim; k++)
                 {
-                    K_triplets.emplace_back(diag_idx, diag_idx, -1.L);
+                    K_triplets.emplace_back(diag_idx, diag_idx, -static_cast<float_type>(1.));
                     diag_idx++;
                 }
 
                 /* -1 on diagonal */
-                K_triplets.emplace_back(diag_idx, diag_idx, -1.L);
+                K_triplets.emplace_back(diag_idx, diag_idx, -static_cast<float_type>(1.));
 
                 /* -v */
                 for (size_t k = 1; k < sc.dim; k++)
                 {
-                    K_triplets.emplace_back(diag_idx - sc.dim + k, diag_idx, 0.L);
+                    K_triplets.emplace_back(diag_idx - sc.dim + k, diag_idx, static_cast<float_type>(0.));
                 }
                 diag_idx++;
 
                 /* 1 on diagonal */
-                K_triplets.emplace_back(diag_idx, diag_idx, 1.L);
+                K_triplets.emplace_back(diag_idx, diag_idx, static_cast<float_type>(1.));
 
                 /* -u */
                 for (size_t k = 0; k < sc.dim; k++)
                 {
-                    K_triplets.emplace_back(diag_idx - sc.dim - 1 + k, diag_idx, 0.L);
+                    K_triplets.emplace_back(diag_idx - sc.dim - 1 + k, diag_idx, static_cast<float_type>(0.));
                 }
                 diag_idx++;
             }
@@ -1901,7 +1901,7 @@ namespace EiCOS
         /* A' (1,2) */
         for (int col = 0; col < At.cols(); col++)
         {
-            for (Eigen::SparseMatrix<long double>::InnerIterator it(At, col); it; ++it)
+            for (Eigen::SparseMatrix<float_type>::InnerIterator it(At, col); it; ++it)
             {
                 KKT_AG_ptr.push_back(&K.coeffRef(it.row(), col_K));
             }
@@ -1915,7 +1915,7 @@ namespace EiCOS
             /* Linear block */
             for (size_t col = 0; col < n_lc; col++)
             {
-                for (Eigen::SparseMatrix<long double>::InnerIterator it(Gt, col_Gt); it; ++it)
+                for (Eigen::SparseMatrix<float_type>::InnerIterator it(Gt, col_Gt); it; ++it)
                 {
                     KKT_AG_ptr.push_back(&K.coeffRef(it.row(), col_K));
                 }
@@ -1928,7 +1928,7 @@ namespace EiCOS
             {
                 for (size_t col = 0; col < sc.dim; col++)
                 {
-                    for (Eigen::SparseMatrix<long double>::InnerIterator it(Gt, col_Gt); it; ++it)
+                    for (Eigen::SparseMatrix<float_type>::InnerIterator it(Gt, col_Gt); it; ++it)
                     {
                         KKT_AG_ptr.push_back(&K.coeffRef(it.row(), col_K));
                     }
@@ -1994,7 +1994,7 @@ namespace EiCOS
         /* A' (1,2) */
         for (int col = 0; col < At.cols(); col++)
         {
-            for (Eigen::SparseMatrix<long double>::InnerIterator it(At, col); it; ++it)
+            for (Eigen::SparseMatrix<float_type>::InnerIterator it(At, col); it; ++it)
             {
                 *KKT_AG_ptr[ptr_i++] = it.value();
             }
@@ -2007,7 +2007,7 @@ namespace EiCOS
             /* Linear block */
             for (size_t col = 0; col < n_lc; col++)
             {
-                for (Eigen::SparseMatrix<long double>::InnerIterator it(Gt, col_Gt); it; ++it)
+                for (Eigen::SparseMatrix<float_type>::InnerIterator it(Gt, col_Gt); it; ++it)
                 {
                     *KKT_AG_ptr[ptr_i++] = it.value();
                 }
@@ -2019,7 +2019,7 @@ namespace EiCOS
             {
                 for (size_t col = 0; col < sc.dim; col++)
                 {
-                    for (Eigen::SparseMatrix<long double>::InnerIterator it(Gt, col_Gt); it; ++it)
+                    for (Eigen::SparseMatrix<float_type>::InnerIterator it(Gt, col_Gt); it; ++it)
                     {
                         *KKT_AG_ptr[ptr_i++] = it.value();
                     }
@@ -2029,11 +2029,11 @@ namespace EiCOS
         }
     }
 
-    void Solver::updateData(const Eigen::SparseMatrix<long double> &G,
-                            const Eigen::SparseMatrix<long double> &A,
-                            const Eigen::Vector<long double, Eigen::Dynamic>  &c,
-                            const Eigen::Vector<long double, Eigen::Dynamic>  &h,
-                            const Eigen::Vector<long double, Eigen::Dynamic>  &b)
+    void Solver::updateData(const Eigen::SparseMatrix<float_type> &G,
+                            const Eigen::SparseMatrix<float_type> &A,
+                            const Eigen::Vector<float_type, Eigen::Dynamic>  &c,
+                            const Eigen::Vector<float_type, Eigen::Dynamic>  &h,
+                            const Eigen::Vector<float_type, Eigen::Dynamic>  &b)
     {
         std::copy(G.valuePtr(), G.valuePtr() + G.nonZeros(), this->G.valuePtr());
         std::copy(A.valuePtr(), A.valuePtr() + A.nonZeros(), this->A.valuePtr());
@@ -2050,8 +2050,8 @@ namespace EiCOS
         updateKKTAG();
     }
 
-    void Solver::updateData(long double *Gpr, long double *Apr,
-                            long double *c, long double *h, long double *b)
+    void Solver::updateData(float_type *Gpr, float_type *Apr,
+                            float_type *c, float_type *h, float_type *b)
     {
         if (equibrilated)
             unsetEquilibration();
@@ -2060,17 +2060,17 @@ namespace EiCOS
         {
             for (int i = 0; i < G.nonZeros(); i++)
                 G.valuePtr()[i] = Gpr[i];
-            this->h = Eigen::Map<Eigen::Vector<long double, Eigen::Dynamic> >(h, n_ineq);
+            this->h = Eigen::Map<Eigen::Vector<float_type, Eigen::Dynamic> >(h, n_ineq);
         }
         if (Apr)
         {
             for (int i = 0; i < A.nonZeros(); i++)
                 A.valuePtr()[i] = Apr[i];
-            this->b = Eigen::Map<Eigen::Vector<long double, Eigen::Dynamic> >(b, n_eq);
+            this->b = Eigen::Map<Eigen::Vector<float_type, Eigen::Dynamic> >(b, n_eq);
         }
         if (c)
         {
-            this->c = Eigen::Map<Eigen::Vector<long double, Eigen::Dynamic> >(c, n_var);
+            this->c = Eigen::Map<Eigen::Vector<float_type, Eigen::Dynamic> >(c, n_var);
         }
 
         setEquilibration();
@@ -2133,7 +2133,7 @@ namespace EiCOS
     //               Eigen::Map<Eigen::VectorXi>(G.innerIndexPtr(), G.nonZeros()).transpose().format(formatter));
     //         print(out, "pfloat Gpr[{}] = {{{}}};\n",
     //               G.nonZeros(),
-    //               Eigen::Map<Eigen::Vector<long double, Eigen::Dynamic> >(G.valuePtr(), G.nonZeros()).transpose().format(formatter));
+    //               Eigen::Map<Eigen::Vector<float_type, Eigen::Dynamic> >(G.valuePtr(), G.nonZeros()).transpose().format(formatter));
     //     }
     //     else
     //     {
@@ -2152,7 +2152,7 @@ namespace EiCOS
     //               Eigen::Map<Eigen::VectorXi>(A.innerIndexPtr(), A.nonZeros()).transpose().format(formatter));
     //         print(out, "pfloat Apr[{}] = {{{}}};\n",
     //               A.nonZeros(),
-    //               Eigen::Map<Eigen::Vector<long double, Eigen::Dynamic> >(A.valuePtr(), A.nonZeros()).transpose().format(formatter));
+    //               Eigen::Map<Eigen::Vector<float_type, Eigen::Dynamic> >(A.valuePtr(), A.nonZeros()).transpose().format(formatter));
     //     }
     //     else
     //     {
