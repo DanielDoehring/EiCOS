@@ -8,19 +8,17 @@ find_package(fmt QUIET)
 
 set(EICOS_INCLUDE
     include
-    test
 )
 
 set(EICOS_SOURCES
     src/eicos.cpp
-    test/ecostester.cpp
 )
 
 add_library(eicos SHARED ${EICOS_SOURCES})
 target_include_directories(eicos PUBLIC ${EICOS_INCLUDE})
 
-set(DEBUG_OPTIONS -Wall -Wextra -Wpedantic)
-set(RELEASE_OPTIONS -O2 -march=native)
+set(DEBUG_OPTIONS -std=c++17 -Wall -Wextra -Wpedantic)
+set(RELEASE_OPTIONS -std=c++17 -Ofast -march=native)
 target_compile_options(eicos PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")
 target_compile_options(eicos PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")
 
@@ -32,9 +30,3 @@ IF (${fmt_FOUND})
 ELSE (${fmt_FOUND})
    MESSAGE(STATUS "Could not locate fmt. Printing has been disabled.")
 ENDIF (${fmt_FOUND})
-
-add_executable(eicos_test_problem src/run.cpp)
-target_link_libraries(eicos_test_problem eicos)
-
-add_executable(eicos_run_tests test/ecostester.cpp)
-target_link_libraries(eicos_run_tests eicos)
