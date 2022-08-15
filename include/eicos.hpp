@@ -33,10 +33,12 @@ namespace EiCOS
         const float_type delta = 2e-7;         // regularization parameter
         const float_type deltastat = 7e-8;     // static regularization parameter
         const float_type eps = 1e13;           // regularization threshold
-        // TODO: Adapt these to higher precision types!
-        const float_type feastol = 1e-8;       // primal/dual infeasibility tolerance
-        const float_type abstol = 1e-8;        // absolute tolerance on duality gap
-        const float_type reltol = 1e-8;        // relative tolerance on duality gap
+
+        // TODO: These have always to be adjusted for more stages ...
+        const float_type feastol = 1e-15;       // primal/dual infeasibility tolerance
+        const float_type abstol = 1e-15;        // absolute tolerance on duality gap
+        const float_type reltol = 1e-15;        // relative tolerance on duality gap
+
         const float_type feastol_inacc = 1e-4; // primal/dual infeasibility relaxed tolerance
         const float_type abstol_inacc = 5e-5;  // absolute relaxed tolerance on duality gap
         const float_type reltol_inacc = 5e-5;  // relative relaxed tolerance on duality gap

@@ -425,7 +425,7 @@ namespace EiCOS
                                 s.segment(cone_start + 1, sc.dim - 1).squaredNorm();
             const float_type zres = z(cone_start) * z(cone_start) -
                                 z.segment(cone_start + 1, sc.dim - 1).squaredNorm();
-            if (sres <= 0 or zres <= 0)
+            if (sres <= static_cast<float_type>(0.) or zres <= static_cast<float_type>(0.))
             {
                 return false;
             }
@@ -781,7 +781,7 @@ namespace EiCOS
                                 r.segment(cone_start + 1, sc.dim - 1).norm();
             cone_start += sc.dim;
 
-            if (cres <= 0 and -cres > alpha)
+            if (cres <= static_cast<float_type>(0.) and -cres > alpha)
             {
                 alpha = -cres;
             }
