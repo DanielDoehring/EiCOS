@@ -457,7 +457,7 @@ namespace EiCOS
             const float_type u0_square = pow(a, 2) + w - d1;
 
             const float_type c2byu02 = (c * c) / u0_square;
-            if (c2byu02 - d <= 0)
+            if (c2byu02 - d <= static_cast<float_type>(0.))
             {
                 return false;
             }
@@ -1378,7 +1378,7 @@ namespace EiCOS
     }
 
     float_type Solver::lineSearch(Eigen::Vector<float_type, Eigen::Dynamic>  &lambda, Eigen::Vector<float_type, Eigen::Dynamic>  &ds, Eigen::Vector<float_type, Eigen::Dynamic>  &dz,
-                              float_type tau, float_type dtau, float_type kap, float_type dkap)
+                              const float_type tau, const float_type dtau, const float_type kap, const float_type dkap)
     {
         /* LP cone */
         float_type alpha;
@@ -1472,7 +1472,7 @@ namespace EiCOS
                             Eigen::Vector<float_type, Eigen::Dynamic>  &dx,        // n_var
                             Eigen::Vector<float_type, Eigen::Dynamic>  &dy,        // n_eq
                             Eigen::Vector<float_type, Eigen::Dynamic>  &dz,        // n_ineq
-                            bool initialize)
+                            const bool initialize)
     {
         Eigen::Vector<float_type, Eigen::Dynamic>  x = ldlt.solve(rhs);
 

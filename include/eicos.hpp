@@ -240,7 +240,7 @@ namespace EiCOS
                         Eigen::Vector<float_type, Eigen::Dynamic>  &dx,
                         Eigen::Vector<float_type, Eigen::Dynamic>  &dy,
                         Eigen::Vector<float_type, Eigen::Dynamic>  &dz,
-                        bool initialize);
+                        const bool initialize);
 
         void allocate();
 
@@ -256,15 +256,13 @@ namespace EiCOS
         void scale2add(const Eigen::Vector<float_type, Eigen::Dynamic>  &x, Eigen::Vector<float_type, Eigen::Dynamic>  &y);
         void scale(const Eigen::Vector<float_type, Eigen::Dynamic>  &z, Eigen::Vector<float_type, Eigen::Dynamic>  &lambda);
         float_type lineSearch(Eigen::Vector<float_type, Eigen::Dynamic>  &lambda,
-                          Eigen::Vector<float_type, Eigen::Dynamic>  &ds,
-                          Eigen::Vector<float_type, Eigen::Dynamic>  &dz,
-                          float_type tau,
-                          float_type dtau,
-                          float_type kap,
-                          float_type dkap);
+                              Eigen::Vector<float_type, Eigen::Dynamic>  &ds,
+                              Eigen::Vector<float_type, Eigen::Dynamic>  &dz,
+                              const float_type tau, const float_type dtau,
+                              const float_type kap, const float_type dkap);
         float_type conicProduct(const Eigen::Vector<float_type, Eigen::Dynamic>  &u,
-                            const Eigen::Vector<float_type, Eigen::Dynamic>  &v,
-                            Eigen::Vector<float_type, Eigen::Dynamic>  &w);
+                                const Eigen::Vector<float_type, Eigen::Dynamic>  &v,
+                                Eigen::Vector<float_type, Eigen::Dynamic>  &w);
         void conicDivision(const Eigen::Vector<float_type, Eigen::Dynamic>  &u,
                            const Eigen::Vector<float_type, Eigen::Dynamic>  &w,
                            Eigen::Vector<float_type, Eigen::Dynamic>  &v);
