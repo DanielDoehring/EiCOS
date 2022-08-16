@@ -2,7 +2,7 @@
 
 #include <chrono>
 #include <eigen3/Eigen/SparseCholesky>
-#include "printing.hpp"
+#include <string>
 
 namespace EiCOS
 {
@@ -73,7 +73,7 @@ namespace EiCOS
         {
             for (Eigen::SparseMatrix<float_type>::InnerIterator it(m, j); it; ++it)
             {
-                print("({:3},{:3}) = {}\n", it.row() + 1, it.col() + 1, it.value());
+                //print("({:3},{:3}) = {}\n", it.row() + 1, it.col() + 1, static_cast<double>(it.value()));
             }
         }
     }
@@ -188,21 +188,21 @@ namespace EiCOS
 
     void Solver::printSummary()
     {
-        print_dbg("- - - - - - - - - - - - - - -\n");
-        print_dbg("|      Problem summary      |\n");
-        print_dbg("- - - - - - - - - - - - - - -\n");
-        print_dbg("    Primal variables:  {}\n", n_var);
-        print_dbg("Equality constraints:  {}\n", n_eq);
-        print_dbg("     Conic variables:  {}\n", n_ineq);
-        print_dbg("- - - - - - - - - - - - - - -\n");
-        print_dbg("  Size of LP cone:     {}\n", n_lc);
-        print_dbg("  Number of SOCs:      {}\n", n_sc);
-        print_dbg("- - - - - - - - - - - - - - -\n");
+        printf("- - - - - - - - - - - - - - -\n");
+        printf("|      Problem summary      |\n");
+        printf("- - - - - - - - - - - - - - -\n");
+        printf("    Primal variables:  %ld\n", n_var);
+        printf("Equality constraints:  %ld\n", n_eq);
+        printf("     Conic variables:  %ld\n", n_ineq);
+        printf("- - - - - - - - - - - - - - -\n");
+        printf("  Size of LP cone:     %ld\n", n_lc);
+        printf("  Number of SOCs:      %ld\n", n_sc);
+        printf("- - - - - - - - - - - - - - -\n");
         for (size_t i = 0; i < n_sc; i++)
         {
-            print_dbg("  Size of SOC #{}:      {}\n", i + 1, so_cones[i].dim);
+            printf("  Size of SOC #%ld:      %ld\n", i + 1, so_cones[i].dim);
         }
-        print_dbg("- - - - - - - - - - - - - - -\n");
+        printf("- - - - - - - - - - - - - - -\n");
     }
 
     /* Incomplete allocation. Heap is still used later.*/
@@ -554,13 +554,29 @@ namespace EiCOS
             {
                 if (reduced_accuracy)
                 {
+                    /*
                     print("Close to optimal (within feastol={:3.1e}, reltol={:3.1e}, abstol={:3.1e}).\n",
-                          max(w.i.dres, w.i.pres), w.i.relgap.value_or(static_cast<float_type>(0.)), w.i.gap);
+                          static_cast<double>(max(w.i.dres, w.i.pres)),
+                          static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
+                          static_cast<double>(w.i.gap));
+                    */
+                    printf("Close to optimal (within feastol=%f, reltol=%f, abstol=%f).\n",
+                          static_cast<double>(max(w.i.dres, w.i.pres)),
+                          static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
+                          static_cast<double>(w.i.gap));
                 }
                 else
                 {
+                    /*
                     print("Optimal (within feastol={:3.1e}, reltol={:3.1e}, abstol={:3.1e}).\n",
-                          max(w.i.dres, w.i.pres), w.i.relgap.value_or(static_cast<float_type>(0.)), w.i.gap);
+                          static_cast<double>(max(w.i.dres, w.i.pres)),
+                          static_cast<double>(w.i.relgap.value_or(static_cast<double>(0.))),
+                          static_cast<double>(w.i.gap) );
+                    */
+                   printf("Close to optimal (within feastol=%f, reltol=%f, abstol=%f).\n",
+                          static_cast<double>(max(w.i.dres, w.i.pres)),
+                          static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
+                          static_cast<double>(w.i.gap));
                 }
             }
 
@@ -586,11 +602,21 @@ namespace EiCOS
             {
                 if (reduced_accuracy)
                 {
-                    print("Close to unbounded (within feastol={:3.1e}).\n", w.i.dinfres.value());
+                    /*
+                    print("Close to unbounded (within feastol={:3.1e}).\n", 
+                        static_cast<double>(w.i.dinfres.value()));
+                    */
+                    printf("Close to unbounded (within feastol=%f).\n", 
+                    static_cast<double>(w.i.dinfres.value()));
                 }
                 else
-                {
-                    print("Unbounded (within feastol={:3.1e}).\n", w.i.dinfres.value());
+                {   
+                    /*
+                    print("Unbounded (within feastol={:3.1e}).\n", 
+                        static_cast<double>(w.i.dinfres.value()));
+                    */
+                   printf("Close to unbounded (within feastol=%f).\n", 
+                    static_cast<double>(w.i.dinfres.value()));
                 }
             }
 
@@ -613,11 +639,21 @@ namespace EiCOS
         {
             if (reduced_accuracy)
             {
-                print("Close to primal infeasible (within feastol={:3.1e}).\n", w.i.pinfres.value());
+                /*
+                print("Close to primal infeasible (within feastol={:3.1e}).\n", 
+                    static_cast<double>(w.i.pinfres.value()));
+                */
+               printf("Close to primal infeasible (within feastol=%f).\n", 
+                    static_cast<double>(w.i.pinfres.value()));
             }
             else
             {
-                print("Primal infeasible (within feastol={:3.1e}).\n", w.i.pinfres.value());
+                /*
+                print("Primal infeasible (within feastol={:3.1e}).\n", 
+                    static_cast<double>(w.i.pinfres.value()));
+                */
+               printf("Close to primal infeasible (within feastol=%f).\n", 
+                    static_cast<double>(w.i.pinfres.value()));
             }
 
             w.i.pinf = true;
@@ -727,28 +763,52 @@ namespace EiCOS
                                    hresz / max(nx + ns, static_cast<float_type>(1.)));
         }
 
-        print_dbg("TAU={:6.4e}  KAP={:6.4e}  PINFRES={:6.4e}  DINFRES={:6.4e}\n",
-                  w.tau, w.kap, w.i.pinfres.value_or(-1), w.i.dinfres.value_or(-1));
+        printf("TAU=%Lf  KAP=%Lf  PINFRES=%Lf DINFRES=%Lf\n",
+                  static_cast<long double>(w.tau), static_cast<long double>(w.kap), 
+                  static_cast<long double>(w.i.pinfres.value_or(-1)), static_cast<long double>(w.i.dinfres.value_or(-1)));
 
         if (settings.verbose)
         {
             const std::string line =
-                format("{:2d}  {:+5.3e}  {:+5.3e}  {:+2.0e}  {:2.0e}  {:2.0e}  {:2.0e}  {:2.0e}",
-                       w.i.iter, w.i.pcost, w.i.dcost, w.i.gap, w.i.pres, w.i.dres, w.i.kapovert, w.i.mu);
+                       std::to_string(w.i.iter) + " " 
+                       + std::to_string(static_cast<long double>(w.i.pcost)) + " " 
+                       + std::to_string(static_cast<long double>(w.i.dcost))  + " " 
+                       + std::to_string(static_cast<long double>(w.i.gap))  + " " 
+                       + std::to_string(static_cast<long double>(w.i.pres))  + " " 
+                       + std::to_string(static_cast<long double>(w.i.dres))  + " " 
+                       + std::to_string(static_cast<long double>(w.i.kapovert)) + " " 
+                       + std::to_string(static_cast<long double>(w.i.mu));
 
             if (w.i.iter == 0)
             {
-                print("It     pcost       dcost      gap   pres   dres    k/t    mu     step   sigma     IR\n");
-                print("{}    ---    ---   {:2d}/{:2d}  -\n", line, w.i.nitref1, w.i.nitref2);
+                //print("It     pcost       dcost      gap   pres   dres    k/t    mu     step   sigma     IR\n");
+                printf("It     pcost       dcost      gap   pres   dres    k/t    mu     step   sigma     IR\n");
+                /*
+                print("{}    ---    ---   {:2d}/{:2d}  -\n", line, 
+                    static_cast<double>(w.i.nitref1), 
+                    static_cast<double>(w.i.nitref2) );
+                */
+               std::cout << line << std::endl;
+               printf("    ---    ---   %f/%f  -\n",
+                    static_cast<double>(w.i.nitref1), 
+                    static_cast<double>(w.i.nitref2) );
             }
             else
             {
+                /*
                 print("{}  {:6.4f}  {:2.0e}  {:2d}/{:2d}/{:2d}\n",
                       line,
-                      w.i.step, w.i.sigma,
-                      w.i.nitref1,
-                      w.i.nitref2,
-                      w.i.nitref3);
+                      static_cast<double>(w.i.step), static_cast<double>(w.i.sigma),
+                      static_cast<double>(w.i.nitref1),
+                      static_cast<double>(w.i.nitref2),
+                      static_cast<double>(w.i.nitref3));
+                */
+               std::cout << line << std::endl;
+               printf("%f  %f  %f/%f/%f\n",
+                      static_cast<double>(w.i.step), static_cast<double>(w.i.sigma),
+                      static_cast<double>(w.i.nitref1),
+                      static_cast<double>(w.i.nitref2),
+                      static_cast<double>(w.i.nitref3));
             }
         }
     }
@@ -900,7 +960,7 @@ namespace EiCOS
         ldlt.factorize(K);
         if (ldlt.info() != Eigen::Success)
         {
-            print_dbg("Failed to factorize matrix while initializing!\n");
+            printf("Failed to factorize matrix while initializing!\n");
             return exitcode::fatal;
         }
 
@@ -929,7 +989,7 @@ namespace EiCOS
         Eigen::Vector<float_type, Eigen::Dynamic>  dx1(n_var);
         Eigen::Vector<float_type, Eigen::Dynamic>  dy1(n_eq);
         Eigen::Vector<float_type, Eigen::Dynamic>  dz1(n_ineq);
-        print_dbg("Solving for RHSstatic_cast<float_type>(1.)\n");
+        printf("Solving for RHS1. \n");
         w.i.nitref1 = solveKKT(rhs1, dx1, dy1, dz1, true);
 
         /* Copy out initial value of x */
@@ -962,7 +1022,7 @@ namespace EiCOS
         Eigen::Vector<float_type, Eigen::Dynamic>  dx2(n_var);
         Eigen::Vector<float_type, Eigen::Dynamic>  dy2(n_eq);
         Eigen::Vector<float_type, Eigen::Dynamic>  dz2(n_ineq);
-        print_dbg("Solving for RHS2.\n");
+        printf("Solving for RHS2.\n");
         w.i.nitref2 = solveKKT(rhs2, dx2, dy2, dz2, true);
 
         /* Copy out initial value of y */
@@ -1012,7 +1072,11 @@ namespace EiCOS
             {
                 if (settings.verbose)
                 {
+                    /*
                     print("Unreliable search direction detected, recovering best iterate ({}) and stopping.\n",
+                          w_best.i.iter);
+                    */
+                   printf("Unreliable search direction detected, recovering best iterate (%ld) and stopping.\n",
                           w_best.i.iter);
                 }
 
@@ -1029,8 +1093,16 @@ namespace EiCOS
 
                     if (settings.verbose)
                     {
+                        /*
                         print("\nNUMERICAL PROBLEMS (reached feastol={:3.1e}, reltol={:3.1e}, abstol={:3.1e}).",
-                              max(w.i.dres, w.i.pres), w.i.relgap.value_or(static_cast<float_type>(0.)), w.i.gap);
+                              static_cast<double>(max(w.i.dres, w.i.pres)),
+                              static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
+                              static_cast<double>(w.i.gap) );
+                        */
+                       printf("\nNUMERICAL PROBLEMS (reached feastol=%f, reltol=%f, abstol=%f).",
+                              static_cast<double>(max(w.i.dres, w.i.pres)),
+                              static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
+                              static_cast<double>(w.i.gap) );
                     }
                     break;
                 }
@@ -1059,7 +1131,12 @@ namespace EiCOS
                 {
                     if (settings.verbose)
                     {
-                        print("No further progress possible, recovering best iterate ({}) and stopping.", w_best.i.iter);
+                        /*
+                        print("No further progress possible, recovering best iterate ({}) and stopping.", 
+                        w_best.i.iter);
+                        */
+                       printf("No further progress possible, recovering best iterate (%ld) and stopping.", 
+                        w_best.i.iter);
                     }
 
                     /* Restore best iterate */
@@ -1073,8 +1150,16 @@ namespace EiCOS
                         code = exitcode::numerics;
                         if (settings.verbose)
                         {
+                            /*
                             print("\nNUMERICAL PROBLEMS (reached feastol={:3.1e}, reltol={:3.1e}, abstol={:3.1e}).",
-                                  max(w.i.dres, w.i.pres), w.i.relgap.value_or(static_cast<float_type>(0.)), w.i.gap);
+                                  static_cast<double>(max(w.i.dres, w.i.pres)),
+                                  static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
+                                  static_cast<double>(w.i.gap) );
+                            */
+                           printf("\nNUMERICAL PROBLEMS (reached feastol=%f, reltol=%f, abstol=%f).",
+                              static_cast<double>(max(w.i.dres, w.i.pres)),
+                              static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
+                              static_cast<double>(w.i.gap) );
                         }
                     }
                     break;
@@ -1083,18 +1168,23 @@ namespace EiCOS
                 else if (w.i.iter == w.i.iter_max)
                 {
                     if (settings.verbose)
-                        print("\nMaximum number of iterations reached, ");
+                        printf("\nMaximum number of iterations reached, ");
 
                     /* Determine whether current iterate is better than what we had so far */
                     if (w.i.isBetterThan(w_best.i))
                     {
                         if (settings.verbose)
-                            print("stopping.\n");
+                            printf("stopping.\n");
                     }
                     else
                     {
                         if (settings.verbose)
-                            print("recovering best iterate ({}) and stopping.\n", w_best.i.iter);
+                            /*
+                            print("recovering best iterate ({}) and stopping.\n", 
+                                w_best.i.iter);
+                            */
+                            printf("recovering best iterate (%ld) and stopping.\n", 
+                                w_best.i.iter);
                         w = w_best;
                     }
 
@@ -1111,18 +1201,23 @@ namespace EiCOS
                 else if (isnan(w.i.pcost))
                 {
                     if (settings.verbose)
-                        print("\nReached NaN dead end, ");
+                        printf("\nReached NaN dead end, ");
 
                     /* Determine whether current iterate is better than what we had so far */
                     if (w.i.iter == 0 or w.i.isBetterThan(w_best.i))
                     {
                         if (settings.verbose)
-                            print("stopping.\n");
+                            printf("stopping.\n");
                     }
                     else
                     {
                         if (settings.verbose)
-                            print("recovering best iterate ({}) and stopping.\n", w_best.i.iter);
+                            /*
+                            print("recovering best iterate ({}) and stopping.\n", 
+                                w_best.i.iter);
+                            */
+                            printf("recovering best iterate (%ld) and stopping.\n", 
+                            w_best.i.iter);
                         w = w_best;
 
                         /* Determine whether we have reached reduced precision */
@@ -1130,7 +1225,7 @@ namespace EiCOS
                         if (code == exitcode::not_converged_yet)
                         {
                             code = exitcode::numerics;
-                            print("stopping without convergence.\n");
+                            printf("stopping without convergence.\n");
                         }
                     }
                     break;
@@ -1165,7 +1260,7 @@ namespace EiCOS
 
             if (ldlt.info() != Eigen::Success)
             {
-                print_dbg("Failed to factorize matrix after update!\n");
+                printf("Failed to factorize matrix after update!\n");
                 return exitcode::fatal;
             }
 
@@ -1175,7 +1270,7 @@ namespace EiCOS
             /* Affine Search Direction (predictor, need dsaff and dzaff only) */
             RHSaffine();
 
-            print_dbg("Solving for affine search direction.\n");
+            printf("Solving for affine search direction.\n");
             solveKKT(rhs2, dx2, dy2, dz2, false);
 
             /* dtau_denom = kap / tau - (c' * x1 + b * y1 + h' * z1); */
@@ -1198,7 +1293,7 @@ namespace EiCOS
             const float_type dkapaff = -w.kap - w.kap / w.tau * dtauaff;
 
             /* Line search on W \ dsaff and W * dzaff */
-            print_dbg("Performing line search on affine direction.\n");
+            printf("Performing line search on affine direction.\n");
             w.i.step_aff = lineSearch(w.lambda, dsaff_by_W, W_times_dzaff, w.tau, dtauaff, w.kap, dkapaff);
 
             /* Centering parameter */
@@ -1208,7 +1303,7 @@ namespace EiCOS
 
             /* Combined search direction */
             RHScombined();
-            print_dbg("Solving for combined search direction.\n");
+            printf("Solving for combined search direction.\n");
             w.i.nitref3 = solveKKT(rhs2, dx2, dy2, dz2, 0);
 
             /* bkap = kap * tau + dkapaff * dtauaff - sigma * w.i.mu; */
@@ -1235,7 +1330,7 @@ namespace EiCOS
             const float_type dkap = -(bkap + w.kap * dtau) / w.tau;
 
             /* Line search on combined direction */
-            print_dbg("Performing line search on combined direction.\n");
+            printf("Performing line search on combined direction.\n");
             w.i.step = settings.gamma * lineSearch(w.lambda, dsaff_by_W, W_times_dzaff, w.tau, dtau, w.kap, dkap);
 
             /* Bring ds to the final unscaled form */
@@ -1256,7 +1351,7 @@ namespace EiCOS
         backscale();
 
         if (settings.verbose)
-            print("Runtime: {}ms\n", std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - t0).count());
+            printf("Runtime: %fms\n", std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - t0).count());
 
         return code;
     }
@@ -1487,8 +1582,8 @@ namespace EiCOS
         const Eigen::Vector<float_type, Eigen::Dynamic>  &by = rhs.segment(n_var, n_eq);
         const Eigen::Vector<float_type, Eigen::Dynamic>  &bz = rhs.tail(mtilde);
 
-        print_dbg("IR: it  ||ex||   ||ey||   ||ez|| (threshold: {:2.3e})\n", error_threshold);
-        print_dbg("    --------------------------------------------------\n");
+        printf("IR: it  ||ex||   ||ey||   ||ez|| (threshold: %Lf)\n", static_cast<long double>(error_threshold));
+        printf("    --------------------------------------------------\n");
 
         /* Iterative refinement */
         size_t k_ref;
@@ -1566,7 +1661,9 @@ namespace EiCOS
             }
             const float_type nez = ez.lpNorm<Eigen::Infinity>();
 
-            print_dbg("     {}   {:.1g}    {:.1g}    {:.1g} \n", k_ref, nex, ney, nez);
+            printf("     %ld   %Lf    %Lf    %Lf \n", 
+                k_ref, static_cast<long double>(nex), static_cast<long double>(ney), 
+                static_cast<long double>(nez));
 
             /* maximum error (infinity norm of e) */
             float_type nerr = max(nex, nez);
@@ -1883,8 +1980,8 @@ namespace EiCOS
 
         assert(size_t(K.nonZeros()) == K_nonzeros);
 
-        print_dbg("Dimension of KKT matrix: {}\n", dim_K);
-        print_dbg("Non-zeros in KKT matrix: {}\n", K.nonZeros());
+        printf("Dimension of KKT matrix: %ld\n", dim_K);
+        printf("Non-zeros in KKT matrix: %ld\n", K.nonZeros());
 
         cacheIndices();
     }
