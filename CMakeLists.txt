@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(eicos)
+project(eicos_MP)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -10,15 +10,15 @@ set(EICOS_INCLUDE
 )
 
 set(EICOS_SOURCES
-    src/eicos.cpp
+    src/eicos_MP.cpp
 )
 
-add_library(eicos SHARED ${EICOS_SOURCES})
-target_include_directories(eicos PUBLIC ${EICOS_INCLUDE})
+add_library(eicos_MP SHARED ${EICOS_SOURCES})
+target_include_directories(eicos_MP PUBLIC ${EICOS_INCLUDE})
 
 set(DEBUG_OPTIONS -std=c++17 -Wall -Wextra -Wpedantic)
 set(RELEASE_OPTIONS -std=c++17 -Ofast -march=native)
-target_compile_options(eicos PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")
-target_compile_options(eicos PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")
+target_compile_options(eicos_MP PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")
+target_compile_options(eicos_MP PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")
 
-target_link_libraries(eicos Eigen3::Eigen)
+target_link_libraries(eicos_MP Eigen3::Eigen)

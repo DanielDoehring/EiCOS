@@ -1,4 +1,4 @@
-#include "eicos.hpp"
+#include "eicos_MP.hpp"
 
 #include <chrono>
 #include <eigen3/Eigen/SparseCholesky>
@@ -198,10 +198,12 @@ namespace EiCOS
         printf("  Size of LP cone:     %ld\n", n_lc);
         printf("  Number of SOCs:      %ld\n", n_sc);
         printf("- - - - - - - - - - - - - - -\n");
+        /*
         for (size_t i = 0; i < n_sc; i++)
         {
             printf("  Size of SOC #%ld:      %ld\n", i + 1, so_cones[i].dim);
         }
+        */
         printf("- - - - - - - - - - - - - - -\n");
     }
 
@@ -560,10 +562,10 @@ namespace EiCOS
                           static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
                           static_cast<double>(w.i.gap));
                     */
-                    printf("Close to optimal (within feastol=%f, reltol=%f, abstol=%f).\n",
-                          static_cast<double>(max(w.i.dres, w.i.pres)),
-                          static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
-                          static_cast<double>(w.i.gap));
+                    printf("Close to optimal (within feastol=%.17Lf, reltol=%.17Lf, abstol=%.17Lf).\n",
+                          static_cast<long double>(max(w.i.dres, w.i.pres)),
+                          static_cast<long double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
+                          static_cast<long double>(w.i.gap));
                 }
                 else
                 {
@@ -573,10 +575,10 @@ namespace EiCOS
                           static_cast<double>(w.i.relgap.value_or(static_cast<double>(0.))),
                           static_cast<double>(w.i.gap) );
                     */
-                   printf("Close to optimal (within feastol=%f, reltol=%f, abstol=%f).\n",
-                          static_cast<double>(max(w.i.dres, w.i.pres)),
-                          static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
-                          static_cast<double>(w.i.gap));
+                   printf("Close to optimal (within feastol=%.17Lf, reltol=%.17Lf, abstol=%.17Lf).\n",
+                          static_cast<long double>(max(w.i.dres, w.i.pres)),
+                          static_cast<long double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
+                          static_cast<long double>(w.i.gap));
                 }
             }
 
@@ -606,8 +608,8 @@ namespace EiCOS
                     print("Close to unbounded (within feastol={:3.1e}).\n", 
                         static_cast<double>(w.i.dinfres.value()));
                     */
-                    printf("Close to unbounded (within feastol=%f).\n", 
-                    static_cast<double>(w.i.dinfres.value()));
+                    printf("Close to unbounded (within feastol=%.17Lf).\n", 
+                    static_cast<long double>(w.i.dinfres.value()));
                 }
                 else
                 {   
@@ -615,8 +617,8 @@ namespace EiCOS
                     print("Unbounded (within feastol={:3.1e}).\n", 
                         static_cast<double>(w.i.dinfres.value()));
                     */
-                   printf("Close to unbounded (within feastol=%f).\n", 
-                    static_cast<double>(w.i.dinfres.value()));
+                   printf("Close to unbounded (within feastol=%.17Lf).\n", 
+                    static_cast<long double>(w.i.dinfres.value()));
                 }
             }
 
@@ -643,8 +645,8 @@ namespace EiCOS
                 print("Close to primal infeasible (within feastol={:3.1e}).\n", 
                     static_cast<double>(w.i.pinfres.value()));
                 */
-               printf("Close to primal infeasible (within feastol=%f).\n", 
-                    static_cast<double>(w.i.pinfres.value()));
+               printf("Close to primal infeasible (within feastol=%.17Lf).\n", 
+                    static_cast<long double>(w.i.pinfres.value()));
             }
             else
             {
@@ -652,8 +654,8 @@ namespace EiCOS
                 print("Primal infeasible (within feastol={:3.1e}).\n", 
                     static_cast<double>(w.i.pinfres.value()));
                 */
-               printf("Close to primal infeasible (within feastol=%f).\n", 
-                    static_cast<double>(w.i.pinfres.value()));
+               printf("Close to primal infeasible (within feastol=%.17Lf).\n", 
+                    static_cast<long double>(w.i.pinfres.value()));
             }
 
             w.i.pinf = true;
@@ -762,11 +764,13 @@ namespace EiCOS
             w.i.dinfres = max(hresy / max(nx, static_cast<float_type>(1.)),
                                    hresz / max(nx + ns, static_cast<float_type>(1.)));
         }
-
+        
+        /*
         if (settings.verbose)
-            printf("TAU=%Lf  KAP=%Lf  PINFRES=%Lf DINFRES=%Lf\n",
+            printf("TAU=%.17Lf  KAP=%.17Lf  PINFRES=%.17Lf DINFRES=%.17Lf\n",
                     static_cast<long double>(w.tau), static_cast<long double>(w.kap), 
                     static_cast<long double>(w.i.pinfres.value_or(-1)), static_cast<long double>(w.i.dinfres.value_or(-1)));
+        */
 
         if (settings.verbose)
         {
@@ -782,17 +786,20 @@ namespace EiCOS
 
             if (w.i.iter == 0)
             {
-                //print("It     pcost       dcost      gap   pres   dres    k/t    mu     step   sigma     IR\n");
-                printf("It     pcost       dcost      gap   pres   dres    k/t    mu     step   sigma     IR\n");
                 /*
+                print("It     pcost       dcost      gap   pres   dres    k/t    mu     step   sigma     IR\n");
                 print("{}    ---    ---   {:2d}/{:2d}  -\n", line, 
                     static_cast<double>(w.i.nitref1), 
                     static_cast<double>(w.i.nitref2) );
                 */
-               std::cout << line << std::endl;
-               printf("    ---    ---   %f/%f  -\n",
-                    static_cast<double>(w.i.nitref1), 
-                    static_cast<double>(w.i.nitref2) );
+
+                /*
+                printf("It     pcost       dcost      gap   pres   dres    k/t    mu     step   sigma     IR\n");
+                std::cout << line << std::endl;
+                printf("    ---    ---   %.17Lf/%.17Lf  -\n",
+                    static_cast<long double>(w.i.nitref1), 
+                    static_cast<long double>(w.i.nitref2) );
+                */
             }
             else
             {
@@ -804,14 +811,17 @@ namespace EiCOS
                       static_cast<double>(w.i.nitref2),
                       static_cast<double>(w.i.nitref3));
                 */
+
+               /*
                if (settings.verbose) {
                     std::cout << line << std::endl;
-                    printf("%f  %f  %f/%f/%f\n",
-                            static_cast<double>(w.i.step), static_cast<double>(w.i.sigma),
-                            static_cast<double>(w.i.nitref1),
-                            static_cast<double>(w.i.nitref2),
-                            static_cast<double>(w.i.nitref3));
+                    printf("%.17Lf  %.17Lf  %.17Lf/%.17Lf/%.17Lf\n",
+                            static_cast<long double>(w.i.step), static_cast<long double>(w.i.sigma),
+                            static_cast<long double>(w.i.nitref1),
+                            static_cast<long double>(w.i.nitref2),
+                            static_cast<long double>(w.i.nitref3));
                }
+               */
             }
         }
     }
@@ -992,8 +1002,10 @@ namespace EiCOS
         Eigen::Vector<float_type, Eigen::Dynamic>  dx1(n_var);
         Eigen::Vector<float_type, Eigen::Dynamic>  dy1(n_eq);
         Eigen::Vector<float_type, Eigen::Dynamic>  dz1(n_ineq);
+        /*
         if (settings.verbose)
             printf("Solving for RHS1. \n");
+        */
         w.i.nitref1 = solveKKT(rhs1, dx1, dy1, dz1, true);
 
         /* Copy out initial value of x */
@@ -1026,8 +1038,10 @@ namespace EiCOS
         Eigen::Vector<float_type, Eigen::Dynamic>  dx2(n_var);
         Eigen::Vector<float_type, Eigen::Dynamic>  dy2(n_eq);
         Eigen::Vector<float_type, Eigen::Dynamic>  dz2(n_ineq);
+        /*
         if (settings.verbose)
             printf("Solving for RHS2.\n");
+        */
         w.i.nitref2 = solveKKT(rhs2, dx2, dy2, dz2, true);
 
         /* Copy out initial value of y */
@@ -1104,10 +1118,10 @@ namespace EiCOS
                               static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
                               static_cast<double>(w.i.gap) );
                         */
-                       printf("\nNUMERICAL PROBLEMS (reached feastol=%f, reltol=%f, abstol=%f).",
-                              static_cast<double>(max(w.i.dres, w.i.pres)),
-                              static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
-                              static_cast<double>(w.i.gap) );
+                       printf("\nNUMERICAL PROBLEMS (reached feastol=%.17Lf, reltol=%.17Lf, abstol=%.17Lf).",
+                              static_cast<long double>(max(w.i.dres, w.i.pres)),
+                              static_cast<long double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
+                              static_cast<long double>(w.i.gap) );
                     }
                     break;
                 }
@@ -1161,10 +1175,10 @@ namespace EiCOS
                                   static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
                                   static_cast<double>(w.i.gap) );
                             */
-                           printf("\nNUMERICAL PROBLEMS (reached feastol=%f, reltol=%f, abstol=%f).",
-                              static_cast<double>(max(w.i.dres, w.i.pres)),
-                              static_cast<double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
-                              static_cast<double>(w.i.gap) );
+                           printf("\nNUMERICAL PROBLEMS (reached feastol=%.17Lf, reltol=%.17Lf, abstol=%.17Lf).",
+                              static_cast<long double>(max(w.i.dres, w.i.pres)),
+                              static_cast<long double>(w.i.relgap.value_or(static_cast<float_type>(0.))),
+                              static_cast<long double>(w.i.gap) );
                         }
                     }
                     break;
@@ -1275,8 +1289,10 @@ namespace EiCOS
             /* Affine Search Direction (predictor, need dsaff and dzaff only) */
             RHSaffine();
             
+            /*
             if (settings.verbose)
                 printf("Solving for affine search direction.\n");
+            */
             solveKKT(rhs2, dx2, dy2, dz2, false);
 
             /* dtau_denom = kap / tau - (c' * x1 + b * y1 + h' * z1); */
@@ -1299,8 +1315,10 @@ namespace EiCOS
             const float_type dkapaff = -w.kap - w.kap / w.tau * dtauaff;
 
             /* Line search on W \ dsaff and W * dzaff */
+            /*
             if (settings.verbose)
                 printf("Performing line search on affine direction.\n");
+            */
             w.i.step_aff = lineSearch(w.lambda, dsaff_by_W, W_times_dzaff, w.tau, dtauaff, w.kap, dkapaff);
 
             /* Centering parameter */
@@ -1310,8 +1328,10 @@ namespace EiCOS
 
             /* Combined search direction */
             RHScombined();
+            /*
             if (settings.verbose)
                 printf("Solving for combined search direction.\n");
+            */
             w.i.nitref3 = solveKKT(rhs2, dx2, dy2, dz2, 0);
 
             /* bkap = kap * tau + dkapaff * dtauaff - sigma * w.i.mu; */
@@ -1338,8 +1358,10 @@ namespace EiCOS
             const float_type dkap = -(bkap + w.kap * dtau) / w.tau;
 
             /* Line search on combined direction */
+            /*
             if (settings.verbose)
                 printf("Performing line search on combined direction.\n");
+            */
             w.i.step = settings.gamma * lineSearch(w.lambda, dsaff_by_W, W_times_dzaff, w.tau, dtau, w.kap, dkap);
 
             /* Bring ds to the final unscaled form */
@@ -1360,7 +1382,7 @@ namespace EiCOS
         backscale();
 
         if (settings.verbose)
-            printf("Runtime: %fms\n", std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - t0).count());
+            printf("Runtime: %.15fms\n", std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - t0).count());
 
         return code;
     }
@@ -1591,10 +1613,12 @@ namespace EiCOS
         const Eigen::Vector<float_type, Eigen::Dynamic>  &by = rhs.segment(n_var, n_eq);
         const Eigen::Vector<float_type, Eigen::Dynamic>  &bz = rhs.tail(mtilde);
 
+        /*
         if (settings.verbose) {
-            printf("IR: it  ||ex||   ||ey||   ||ez|| (threshold: %Lf)\n", static_cast<long double>(error_threshold));
+            printf("IR: it  ||ex||   ||ey||   ||ez|| (threshold: %.17Lf)\n", static_cast<long double>(error_threshold));
             printf("    --------------------------------------------------\n");
         }
+        */
 
         /* Iterative refinement */
         size_t k_ref;
@@ -1672,10 +1696,12 @@ namespace EiCOS
             }
             const float_type nez = ez.lpNorm<Eigen::Infinity>();
 
+            /*
             if (settings.verbose)
-                printf("     %ld   %Lf    %Lf    %Lf \n", 
+                printf("     %ld   %.17Lf    %.17Lf    %.17Lf \n", 
                     k_ref, static_cast<long double>(nex), static_cast<long double>(ney), 
                     static_cast<long double>(nez));
+            */
 
             /* maximum error (infinity norm of e) */
             float_type nerr = max(nex, nez);

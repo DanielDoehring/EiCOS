@@ -27,33 +27,40 @@ namespace EiCOS
         not_converged_yet = -87
     };
 
+    // CARE: These have always to be adjusted for more stages ...
     struct Settings
     {
+        //const float_type SafeEps = 100 * std::numeric_limits<float_type>::digits10;
+        const float_type SafeEps = 1e-21;
+        const float_type SqrtSafeEps = sqrt(SafeEps);
+
         const float_type gamma = 0.99;         // scaling the final step length
         const float_type delta = 2e-7;         // regularization parameter
         const float_type deltastat = 7e-8;     // static regularization parameter
         const float_type eps = 1e13;           // regularization threshold
 
-        // TODO: These have always to be adjusted for more stages ...
-        const float_type feastol = 1e-8;       // primal/dual infeasibility tolerance
-        const float_type abstol = 1e-8;        // absolute tolerance on duality gap
-        const float_type reltol = 1e-8;        // relative tolerance on duality gap
+        const float_type feastol = SafeEps;       // primal/dual infeasibility tolerance
+        const float_type abstol = SafeEps;        // absolute tolerance on duality gap
+        const float_type reltol = SafeEps;        // relative tolerance on duality gap
 
         const float_type feastol_inacc = 1e-4; // primal/dual infeasibility relaxed tolerance
         const float_type abstol_inacc = 5e-5;  // absolute relaxed tolerance on duality gap
         const float_type reltol_inacc = 5e-5;  // relative relaxed tolerance on duality gap
+
         const size_t nitref = 9;           // maximum number of iterative refinement steps
-        const size_t maxit = 100;          // maximum number of iterations
-        bool verbose = false;              // print solver output
-        const float_type linsysacc = 1e-14;    // rel. accuracy of search direction
+        const size_t maxit = 1000;          // maximum number of iterations
+
+        bool verbose = true;              // print solver output
+
+        const float_type linsysacc = SafeEps;    // rel. accuracy of search direction
         const float_type irerrfact = 6;        // factor by which IR should reduce err
-        const float_type stepmin = 1e-4;       // smallest step that we do take
+        const float_type stepmin = 1e-9;       // smallest step that we do take
         const float_type stepmax = 0.999;      // largest step allowed, also in affine dir.
         const float_type sigmamin = 1e-4;      // always do some centering
         const float_type sigmamax = 1.;        // never fully center
-        const size_t equil_iters = 3;      // eqilibration iterations
-        const size_t iter_max = 100;       // maximum solver iterations
-        const size_t safeguard = 5000;      // Maximum increase in PRES before NUMERICS is thrown.
+        const size_t equil_iters = 5;      // eqilibration iterations
+        const size_t iter_max = 1000;       // maximum solver iterations
+        const size_t safeguard = 1000;      // Maximum increase in PRES before NUMERICS is thrown.
     };
 
     struct Information
@@ -165,7 +172,7 @@ namespace EiCOS
         void updateData(float_type *Gpr, float_type *Apr,
                         float_type *c, float_type *h, float_type *b);
 
-        exitcode solve(bool verbose = false);
+        exitcode solve(bool verbose = true);
 
         const Eigen::Vector<float_type, Eigen::Dynamic>  &solution() const;
 
