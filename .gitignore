@@ -3,8 +3,4 @@ build
 literature
 reference
 cppcheck.sh
-CMakeFiles/*
-CMakeCache.txt
-cmake_install.cmake
-*.so
 Makefile

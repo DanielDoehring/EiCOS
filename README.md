@@ -65,7 +65,7 @@ g_i \in \mathbb{R}^{q_i-1} \\
 ```cpp
 #include "eicos.hpp"
 
-Eigen::SparseMatrix<double> G, A;
+Eigen::SparseMatrix<long double> G, A;
 Eigen::VectorXd c, h, b;
 Eigen::VectorXi q;
 
