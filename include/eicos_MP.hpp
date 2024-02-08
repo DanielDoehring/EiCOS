@@ -3,11 +3,15 @@
 #include <eigen3/Eigen/Sparse>
 #include <optional>
 
+// bin-based types do not work for some reason
+//#include <boost/multiprecision/cpp_bin_float.hpp>
+
 #include <boost/multiprecision/cpp_dec_float.hpp> 
 #include <boost/multiprecision/eigen.hpp>
 
 //using float_type = double;
-using float_type = boost::multiprecision::cpp_dec_float_50;
+//using float_type = boost::multiprecision::cpp_dec_float_50;
+using float_type = boost::multiprecision::number<boost::multiprecision::cpp_dec_float<20>>;
 
 namespace EiCOS
 {
@@ -48,18 +52,18 @@ namespace EiCOS
         const float_type reltol_inacc = 5e-5;  // relative relaxed tolerance on duality gap
 
         const size_t nitref = 9;           // maximum number of iterative refinement steps
-        const size_t maxit = 1000;          // maximum number of iterations
+        const size_t maxit = 2000;          // maximum number of iterations
 
         bool verbose = true;              // print solver output
 
         const float_type linsysacc = SafeEps;    // rel. accuracy of search direction
         const float_type irerrfact = 6;        // factor by which IR should reduce err
-        const float_type stepmin = 1e-9;       // smallest step that we do take
+        const float_type stepmin = 1e-13;       // smallest step that we do take
         const float_type stepmax = 0.999;      // largest step allowed, also in affine dir.
         const float_type sigmamin = 1e-4;      // always do some centering
         const float_type sigmamax = 1.;        // never fully center
         const size_t equil_iters = 5;      // eqilibration iterations
-        const size_t iter_max = 1000;       // maximum solver iterations
+        const size_t iter_max = 2000;       // maximum solver iterations
         const size_t safeguard = 1000;      // Maximum increase in PRES before NUMERICS is thrown.
     };
 
