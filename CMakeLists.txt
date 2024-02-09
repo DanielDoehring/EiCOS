@@ -18,7 +18,7 @@ add_library(eicos_LDBL SHARED ${eicos_LDBL_SOURCES})
 target_include_directories(eicos_LDBL PUBLIC ${eicos_LDBL_INCLUDE})
 
 set(DEBUG_OPTIONS -Wall -Wextra -Wpedantic)
-set(RELEASE_OPTIONS -Ofast -march=native)
+set(RELEASE_OPTIONS -Ofast)
 target_compile_options(eicos_LDBL PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")
 target_compile_options(eicos_LDBL PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")
 
