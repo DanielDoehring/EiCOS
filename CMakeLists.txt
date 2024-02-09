@@ -16,8 +16,8 @@ set(EICOS_SOURCES
 add_library(eicos_MP SHARED ${EICOS_SOURCES})
 target_include_directories(eicos_MP PUBLIC ${EICOS_INCLUDE})
 
-set(DEBUG_OPTIONS -std=c++17 -Wall -Wextra -Wpedantic)
-set(RELEASE_OPTIONS -std=c++17 -Ofast -march=native)
+set(DEBUG_OPTIONS -Wall -Wextra -Wpedantic)
+set(RELEASE_OPTIONS -Ofast)
 target_compile_options(eicos_MP PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")
 target_compile_options(eicos_MP PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")
 
