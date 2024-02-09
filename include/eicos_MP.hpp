@@ -35,8 +35,12 @@ namespace EiCOS
     struct Settings
     {
         //const float_type SafeEps = 100 * std::numeric_limits<float_type>::digits10;
-        const float_type SafeEps = 1e-21;
-        const float_type SqrtSafeEps = sqrt(SafeEps);
+        //const float_type SafeEps = 1e-21;
+        //const float_type SqrtSafeEps = sqrt(SafeEps);
+        const float_type SafeEps = 1e-15;
+
+        // Use same value as for double, long double
+        //const float_type SafeEps = 1e-9;
 
         const float_type gamma = 0.99;         // scaling the final step length
         const float_type delta = 2e-7;         // regularization parameter
@@ -52,19 +56,19 @@ namespace EiCOS
         const float_type reltol_inacc = 5e-5;  // relative relaxed tolerance on duality gap
 
         const size_t nitref = 9;           // maximum number of iterative refinement steps
-        const size_t maxit = 2000;          // maximum number of iterations
+        const size_t maxit = 500;          // maximum number of iterations
 
         bool verbose = true;              // print solver output
 
         const float_type linsysacc = SafeEps;    // rel. accuracy of search direction
         const float_type irerrfact = 6;        // factor by which IR should reduce err
-        const float_type stepmin = 1e-13;       // smallest step that we do take
+        const float_type stepmin = 1e-9;       // smallest step that we do take
         const float_type stepmax = 0.999;      // largest step allowed, also in affine dir.
         const float_type sigmamin = 1e-4;      // always do some centering
         const float_type sigmamax = 1.;        // never fully center
         const size_t equil_iters = 5;      // eqilibration iterations
-        const size_t iter_max = 2000;       // maximum solver iterations
-        const size_t safeguard = 1000;      // Maximum increase in PRES before NUMERICS is thrown.
+        const size_t iter_max = 500;       // maximum solver iterations
+        const size_t safeguard = 500;      // Maximum increase in PRES before NUMERICS is thrown.
     };
 
     struct Information
