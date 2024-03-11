@@ -11,7 +11,7 @@
 
 //using float_type = double;
 //using float_type = boost::multiprecision::cpp_dec_float_50;
-using float_type = boost::multiprecision::number<boost::multiprecision::cpp_dec_float<20>>;
+using float_type = boost::multiprecision::number<boost::multiprecision::cpp_dec_float<40>>;
 
 namespace EiCOS
 {
